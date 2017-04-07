@@ -11,8 +11,10 @@ Type ```sudo raspi-config``` and enable RaspiCam
 ### Install dependencies
 ```
 sudo apt-get update
-sudo apt-get install python-picamera imagemagick
-sudo pip install pyserial pyimgur gspread
+sudo apt-get install git python-picamera imagemagick
+sudo pip install pyserial pyimgur gspread oauth2client
+cd
+git clone https://github.com/emlyon/MakersBeehives-PI.git
 ```
 - [pySerial](http://pythonhosted.org/pyserial/shortintro.html)
 - [PiCamera](https://www.raspberrypi.org/documentation/usage/camera/python/README.md)
