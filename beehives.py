@@ -38,28 +38,30 @@ scope = [ 'https://spreadsheets.google.com/feeds' ]
 
 while True:
 	serial_string = ser.readline()
-	print( 'incoming serial_string:' )
-	print serial_string
+	print( "[%s]" % timestamp )
+	print( '>>>> incoming serial_string: %s' % serial_string )
 
 	timestamp = get_timestamp()
+
 
 	try:
 		# check if incoming data is parsable
 		serial_data = json.loads( serial_string )
-		print( 'parsed serial_data:' )
-		print( serial_data )
+		print( '>>>> parsed serial_data: %s' % serial_data )
 
 		# Capture image
 		camera.capture( IMG_PATH )
+		print( '>>>> image captured' )
 
 		# Resize image with imagemagick
 		call( [ 'mogrify', '-resize', '50%', IMG_PATH ] )
+		print( '>>>> image resized' )
 
 		# Upload image to imgur
 		imgur = pyimgur.Imgur( IMGUR_CLIENT_ID )
 		image_title = 'MakersBeehive ' + str( BEEHIVE_ID ) + ' | ' + timestamp
 		uploaded_image = imgur.upload_image( IMG_PATH, title = image_title )
-		# print( uploaded_image.link )
+		print( '>>>> image uploaded at %s' % uploaded_image.link )
 
 		# Upload data to spreadsheet
 		creds = ServiceAccountCredentials.from_json_keyfile_name( 'spreadsheet_credits.json', scope )
@@ -69,8 +71,8 @@ while True:
 		index = 1
 		sheet.insert_row( row, index )
 
-		print( row )
+		print( '>>>> data uploaded: ' + str( row ) )
 
 	except:
-		print( '[%s]: something went wrong...' % timestamp )
+		print( '>>>> SOMETHING WENT WRONG' )
 		pass
