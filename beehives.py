@@ -38,11 +38,11 @@ scope = [ 'https://spreadsheets.google.com/feeds' ]
 
 while True:
 	serial_string = ser.readline()
-	print( "[%s]" % timestamp )
-	print( '>>>> incoming serial_string: %s' % serial_string )
 
 	timestamp = get_timestamp()
+	print( "[%s]" % timestamp )
 
+	print( '>>>> incoming serial_string: %s' % serial_string )
 
 	try:
 		# check if incoming data is parsable
