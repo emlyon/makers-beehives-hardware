@@ -73,6 +73,9 @@ while True:
 
 		print( '>>>> data uploaded: ' + str( row ) )
 
+		sleep( 600 )
+		ser.flush()
+
 	except:
 		print( '>>>> SOMETHING WENT WRONG' )
 		pass
