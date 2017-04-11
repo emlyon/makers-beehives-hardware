@@ -13,12 +13,21 @@ from subprocess import call
 from time import sleep
 
 BEEHIVE_ID = 0
+fails = 0
 
 # Timestamp
 def get_timestamp():
 	ts = time.time()
 	st = datetime.datetime.fromtimestamp( ts ).strftime( '%Y-%m-%d %H:%M:%S' )
 	return st
+
+# Reboot from python
+def reboot():
+    command = "/usr/bin/sudo /sbin/shutdown -r now"
+    import subprocess
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output = process.communicate()[0]
+    print output
 
 # Serial
 ser = serial.Serial( '/dev/ttyACM0', 115200 )
@@ -72,9 +81,16 @@ while True:
 
 		print( '>>>> data uploaded: ' + str( row ) )
 
-		sleep( 600 )
+		fails = 0
+		sleep( 1800 )
 		ser.flush()
 
 	except:
 		print( '>>>> SOMETHING WENT WRONG' )
+		fails = fails + 1
+		if fails == 5:
+			reboot()
+
+		sleep( 600 )
+		ser.flush()
 		pass
