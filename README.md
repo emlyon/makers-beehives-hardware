@@ -40,3 +40,14 @@ Download Spreadsheet credits as documented on https://www.twilio.com/blog/2017/0
 ```sudo nano /etc/rc.local```  
 Add this line before exit  
 ```su pi -c 'python /home/pi/MakersBeehives-PI/beehives.py < /dev/null &'```
+
+
+### Reference
+- [Raspberry Pi / Python: install pip for Python modules dependencies installation](http://makio135.tumblr.com/post/84826991967/raspberry-pi-python-install-pip-for-python)
+- [How to mount a USB flash drive on Raspberry Pi](http://raspi.tv/2012/mount-a-usb-flash-drive-on-raspberry-pi)
+- [How to setup multiple WiFi networks?](http://raspberrypi.stackexchange.com/questions/11631/how-to-setup-multiple-wifi-networks#11738)
+- [imagemagick/mogrify](https://www.imagemagick.org/script/mogrify.php)
+- [Camera Module](https://www.raspberrypi.org/documentation/hardware/camera/README.md)
+- [Scheduling tasks with Cron](https://www.raspberrypi.org/documentation/linux/usage/cron.md)
+- [Change default username](http://raspberrypi.stackexchange.com/questions/12827/change-default-username)
+- [Execute sudo without Password](http://askubuntu.com/questions/147241/execute-sudo-without-password#147265)
