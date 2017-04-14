@@ -12,8 +12,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 from subprocess import call
 from time import sleep
 
+
 BEEHIVE_ID = 0
-fails = 0
+
 
 # Timestamp
 def get_timestamp():
@@ -29,14 +30,20 @@ def reboot():
     output = process.communicate()[0]
     print output
 
+
+start_time = get_timestamp()
+fails = 0
+
+
 # Serial
 ser = serial.Serial( '/dev/ttyACM0', 115200 )
 
 # PiCamera
 camera = picamera.PiCamera()
-IMG_PATH = 'capture.jpg'
+IMG_PATH = 'capture.gif'
 
-# imgur
+# Imgur
+image_link = ""
 IMGUR_CLIENT_ID = ""
 with open( 'imgur_credits.json' ) as imgur_credits_file:
 	imgur_credits = json.load( imgur_credits_file )
@@ -45,52 +52,64 @@ with open( 'imgur_credits.json' ) as imgur_credits_file:
 # Spreadsheets
 scope = [ 'https://spreadsheets.google.com/feeds' ]
 
-while True:
+while True :
 	serial_string = ser.readline()
 	# print( '>>>> incoming serial_string: %s' % serial_string )
 
 	timestamp = get_timestamp()
 	print( "[%s]" % timestamp )
 
-	try:
-		# check if incoming data is parsable
+	try :
+		# Check if incoming data is parsable
 		serial_data = json.loads( serial_string )
 		print( '>>>> parsed serial_data: %s' % serial_data )
+		
+		# Check hour ( no night vision )
+		if 5 < datetime.datetime.now().hour < 23 :
+			# Capture sequence
+			for i in range( 20 ) :
+				img_title = str( i ) + '.jpg'
+				# Capture image
+				camera.capture( img_title )
+				print( '>>>> image %d captured' % i )
 
-		# Capture image
-		camera.capture( IMG_PATH )
-		print( '>>>> image captured' )
+				sleep( 0.5 )
 
-		# Resize image with imagemagick
-		call( [ 'mogrify', '-resize', '50%', IMG_PATH ] )
-		print( '>>>> image resized' )
-
-		# Upload image to imgur
-		imgur = pyimgur.Imgur( IMGUR_CLIENT_ID )
-		image_title = 'MakersBeehive ' + str( BEEHIVE_ID ) + ' | ' + timestamp
-		uploaded_image = imgur.upload_image( IMG_PATH, title = image_title )
-		print( '>>>> image uploaded at %s' % uploaded_image.link )
+			# Convert sequence to gif
+			call( [ 'mogrify', '-resize', '800x600', '*.jpg' ] )
+			print( '>>>> images resized' )
+			call( [ 'convert', '-delay', '25', '-loop', '0', '*.jpg', IMG_PATH ] )
+			print( '>>>> gif created' )
+			
+			# Upload image to imgur
+			imgur = pyimgur.Imgur( IMGUR_CLIENT_ID )
+			image_title = 'MakersBeehive ' + str( BEEHIVE_ID ) + ' | ' + timestamp
+			uploaded_image = imgur.upload_image( IMG_PATH, title = image_title )
+			image_link = uploaded_image.link
+			print( '>>>> image uploaded at %s' % image_link )
 
 		# Upload data to spreadsheet
 		creds = ServiceAccountCredentials.from_json_keyfile_name( 'spreadsheet_credits.json', scope )
 		client = gspread.authorize( creds )
 		sheet = client.open( 'beehives' ).get_worksheet( BEEHIVE_ID )
-		row = [ timestamp, serial_data, uploaded_image.link ]
+		row = [ start_time, timestamp, serial_string, image_link ]
 		index = 1
 		sheet.insert_row( row, index )
 
 		print( '>>>> data uploaded: ' + str( row ) )
-
+		
+		# Wait 30 minutes
 		fails = 0
 		sleep( 1800 )
 		ser.flush()
 
-	except:
-		print( '>>>> SOMETHING WENT WRONG' )
+	except :
+		print( '>>>> SOMETHING WENT WRONG %d' % fails )
 		fails = fails + 1
-		if fails == 5:
+		if fails == 5 :
 			reboot()
-
+		
+		# Wait 10 minutes
 		sleep( 600 )
 		ser.flush()
 		pass
