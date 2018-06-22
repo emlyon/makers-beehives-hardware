@@ -13,7 +13,7 @@ from subprocess import call
 from time import sleep
 
 
-BEEHIVE_ID = 0
+BEEHIVE_ID = 3
 
 
 # Timestamp
@@ -32,7 +32,6 @@ def reboot():
 
 
 start_time = get_timestamp()
-fails = 0
 
 
 # Serial
@@ -63,9 +62,9 @@ while True :
 		# Check if incoming data is parsable
 		serial_data = json.loads( serial_string )
 		print( '>>>> parsed serial_data: %s' % serial_data )
-		
+
 		# Check hour ( no night vision )
-		if 5 < datetime.datetime.now().hour < 23 :
+		if serial_data[ 'light' ] != '0.00Lux' :
 			# Capture sequence
 			for i in range( 20 ) :
 				img_title = str( i ) + '.jpg'
@@ -80,7 +79,7 @@ while True :
 			print( '>>>> images resized' )
 			call( [ 'convert', '-delay', '25', '-loop', '0', '*.jpg', IMG_PATH ] )
 			print( '>>>> gif created' )
-			
+
 			# Upload image to imgur
 			imgur = pyimgur.Imgur( IMGUR_CLIENT_ID )
 			image_title = 'MakersBeehive ' + str( BEEHIVE_ID ) + ' | ' + timestamp
@@ -92,24 +91,23 @@ while True :
 		creds = ServiceAccountCredentials.from_json_keyfile_name( 'spreadsheet_credits.json', scope )
 		client = gspread.authorize( creds )
 		sheet = client.open( 'beehives' ).get_worksheet( BEEHIVE_ID )
-		row = [ start_time, timestamp, serial_string, image_link ]
+		row = [ timestamp, serial_string, image_link ]
 		index = 1
 		sheet.insert_row( row, index )
 
 		print( '>>>> data uploaded: ' + str( row ) )
-		
+
+		call( [ 'sudo', 'shutdown', '-h', 'now' ] )
+
 		# Wait 30 minutes
-		fails = 0
 		sleep( 1800 )
 		ser.flush()
 
 	except :
-		print( '>>>> SOMETHING WENT WRONG %d' % fails )
-		fails = fails + 1
-		if fails == 5 :
-			reboot()
-		
-		# Wait 10 minutes
+		print( '>>>> SOMETHING WENT WRONG' )
+		reboot()
+
+		# Wait 10 minute
 		sleep( 600 )
 		ser.flush()
 		pass
