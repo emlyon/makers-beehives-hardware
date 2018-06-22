@@ -1,8 +1,8 @@
 # MakersBeehives-PI
 Raspberry pi script for uploading data from Makers'Beehives
 
-Based on Smart Citizen Kit: https://smartcitizen.me/
-
+Based on Smart Citizen Kit: https://smartcitizen.me/  
+Upload `sck_ruches_firmware` to Smart Citizen Kit via Arduino software
 
 ### Enable RaspiCam
 Type ```sudo raspi-config``` and enable RaspiCam
