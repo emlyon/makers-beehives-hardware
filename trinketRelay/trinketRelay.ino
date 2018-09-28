@@ -3,6 +3,8 @@ Trinket ----> Relay
      5V ----> VCC
     GND ----> GND
      #4 ----> IN
+     
+Le relais s'allume quand le pin 4 est sur LOW
 */
 void setup() {
   pinMode( 4, OUTPUT );
