@@ -1,7 +1,7 @@
 #include <avr/sleep.h>
 
-#define awakeMinute 10
-#define sleepMinute 30
+#define awakeMinute 5
+#define sleepMinute 60
 #define ONE_SEC 1000
 
 void setup() {
