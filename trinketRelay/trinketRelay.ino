@@ -5,6 +5,8 @@ Trinket ----> Relay
      #4 ----> IN
 */
 void setup() {
+  pinMode( 1, OUTPUT );
+  digitalWrite( 1, HIGH );
   pinMode( 4, OUTPUT );
 }
 
