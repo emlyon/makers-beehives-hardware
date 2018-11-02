@@ -35,7 +35,15 @@ start_time = get_timestamp()
 
 
 # Serial
-ser = serial.Serial( '/dev/ttyACM0', 115200 )
+try:
+	ser = serial.Serial( '/dev/ttyACM0', 115200 )
+except: 
+	try:
+		ser = serial.Serial( '/dev/ttyACM1', 115200 )
+	except:
+		print('Unable to comunicate with arduino on Serial port')
+		reboot()
+		sleep(10)
 
 # PiCamera
 camera = picamera.PiCamera()
@@ -52,6 +60,7 @@ with open( 'imgur_credits.json' ) as imgur_credits_file:
 scope = [ 'https://spreadsheets.google.com/feeds' ]
 
 while True :
+	ser.flush()
 	serial_string = ser.readline()
 	# print( '>>>> incoming serial_string: %s' % serial_string )
 
@@ -97,17 +106,22 @@ while True :
 
 		print( '>>>> data uploaded: ' + str( row ) )
 
-		call( [ 'sudo', 'shutdown', '-h', 'now' ] )
+		# call( [ 'sudo', 'shutdown', '-h', 'now' ] )
 
 		# Wait 30 minutes
 		sleep( 1800 )
 		ser.flush()
 
-	except :
-		print( '>>>> SOMETHING WENT WRONG' )
-		reboot()
-
-		# Wait 10 minute
-		sleep( 600 )
-		ser.flush()
+	except Exception as e:
+		if e.__class__ != ValueError:
+			print( '>>>> SOMETHING WENT WRONG' )
+			print(str(e))
+			# reboot()
+			
+			template= "An exception of type {0} occured"
+			message= template.format(type(e).__name__)
+			print message
+			# Wait 1 minute
+			sleep( 60 )
+			ser.flush()
 		pass
