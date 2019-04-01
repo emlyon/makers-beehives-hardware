@@ -1,4 +1,6 @@
-# MakersBeehives-PI
+# MakersBeehives-Phardware
+
+## Raspberry Pi config
 Raspberry pi script for uploading data from Makers'Beehives
 
 Based on Smart Citizen Kit: https://smartcitizen.me/  
@@ -51,3 +53,23 @@ Add this line before exit
 - [Scheduling tasks with Cron](https://www.raspberrypi.org/documentation/linux/usage/cron.md)
 - [Change default username](http://raspberrypi.stackexchange.com/questions/12827/change-default-username)
 - [Execute sudo without Password](http://askubuntu.com/questions/147241/execute-sudo-without-password#147265)
+
+
+## Arduino config
+
+### Load sensors
+![](https://cdn.instructables.com/F36/2JAR/J822Y1NX/F362JARJ822Y1NX.LARGE.jpg)
+Based on https://www.instructables.com/id/Arduino-Bathroom-Scale-With-50-Kg-Load-Cells-and-H/
+
+### Seed Studio Base Shield wiring
+- [Temperature & Humidity Sensor](https://www.seeedstudio.com/Grove-Temperature-Humidity-Sensor-DHT11-p-745.html) on D2
+	- libraries: https://github.com/adafruit/Adafruit_Sensor & https://github.com/adafruit/DHT-sensor-library
+	- code: http://wiki.seeedstudio.com/Grove-TemperatureAndHumidity_Sensor/ & https://www.instructables.com/id/Arduino-DHT11-Sensor/
+- [Grove Sound Sensor](https://www.seeedstudio.com/Grove-Sound-Sensor-p-752.html) on A0
+	- code: http://wiki.seeedstudio.com/Grove-Sound_Sensor/
+- [Digital Light Sensor](https://www.seeedstudio.com/Grove-Digital-Light-Sensor-p-1281.html) on I2C
+	- library: http://wiki.seeedstudio.com/Grove-Digital_Light_Sensor/: Digital Light Sensor Library
+	- code: http://wiki.seeedstudio.com/Grove-Digital_Light_Sensor/ & http://www.ardumotive.com/lux-sensor-en.html
+- [Multichannel Gas Sensor](https://www.seeedstudio.com/Grove-Multichannel-Gas-Sensor-p-2502.html) on I2C
+	- library: https://github.com/Seeed-Studio/Mutichannel_Gas_Sensor/archive/master.zip
+	- code: http://wiki.seeedstudio.com/Grove-Multichannel_Gas_Sensor/
