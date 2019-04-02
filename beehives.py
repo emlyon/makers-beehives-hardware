@@ -54,7 +54,6 @@ with open('imgur_credits.json') as imgur_credits_file:
 # Spreadsheets
 scope = ['https://spreadsheets.google.com/feeds']
 
-start_time = get_timestamp()
 while True :
 	ser.flush()
 	serial_string = ser.readline()
