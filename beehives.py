@@ -114,8 +114,8 @@ while True :
 			print(str(e))
 			# reboot()
 			
-			template= "An exception of type {0} occured"
-			message= template.format(type(e).__name__)
+			template = "An exception of type {0} occured"
+			message = template.format(type(e).__name__)
 			print message
 			# Wait 1 minute
 			sleep(60)
