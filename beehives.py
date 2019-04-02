@@ -13,7 +13,7 @@ from subprocess import call
 from time import sleep
 
 hostname = socket.gethostname()
-BEEHIVE_ID = hostname[-1]
+BEEHIVE_ID = int(hostname[-1])
 
 # Timestamp
 def get_timestamp():

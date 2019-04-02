@@ -3,6 +3,40 @@
 ![](beehive-diagram.png)
 
 ## Raspberry Pi config
+remove auto-start from /etc/rc.local
+```
+sudo nano /etc/rc.local
+```
+(add a `#` at the beginning of `su bee -c 'cd /home/bee/makersbeehives-pi/ && python beehives.py < /$`)
+
+auto start and git pull using crontab
+```
+crontab -e
+```
+select nano `2`  
+and add:
+```
+@reboot sleep 10 && cd /home/bee/makers-beehives-hardware && echo `{ git pull && echo '{"result":"up to date"}' > /home/bee/git_status.json ; } || echo '{"result":"could not update"}' > /home/bee/git_status.json` && python beehives.py
+```
+
+config wifi:
+```
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+
+```
+network={
+    ssid="makerslab"
+    psk="makerslab"
+}
+```
+
+git clone:
+```
+cd && git clone https://github.com/emlyon/makers-beehives-hardware.git
+```
+
+
 Raspberry pi script for uploading data from Makers'Beehives
 
 Based on Smart Citizen Kit: https://smartcitizen.me/  
