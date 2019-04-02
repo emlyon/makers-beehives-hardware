@@ -1,5 +1,7 @@
 # MakersBeehives-Phardware
 
+![](beehive-diagram.png)
+
 ## Raspberry Pi config
 Raspberry pi script for uploading data from Makers'Beehives
 
