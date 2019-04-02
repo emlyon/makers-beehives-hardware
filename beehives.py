@@ -8,13 +8,12 @@ import picamera
 import pyimgur
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
+import socket
 from subprocess import call
 from time import sleep
 
-
-BEEHIVE_ID = 3
-
+hostname = socket.gethostname()
+BEEHIVE_ID = hostname[-1]
 
 # Timestamp
 def get_timestamp():
