@@ -68,7 +68,7 @@ while True :
 		serial_data = json.loads(serial_string)
 		print('>>>> parsed serial_data: %s' % serial_data)
 
-		# Check hour (no night vision)
+		# Check light before taking pics (no night vision)
 		if serial_data['light'] != '0.00Lux' :
 			# Capture sequence
 			for i in range(20) :
