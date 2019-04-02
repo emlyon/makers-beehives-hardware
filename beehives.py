@@ -29,11 +29,7 @@ def reboot():
     output = process.communicate()[0]
     print output
 
-
-start_time = get_timestamp()
-
-
-# Serial
+# Init Serial
 try:
 	ser = serial.Serial( '/dev/ttyACM0', 115200 )
 except: 
@@ -46,7 +42,7 @@ except:
 
 # PiCamera
 camera = picamera.PiCamera()
-IMG_PATH = 'capture.gif'
+GIF_PATH = 'capture.gif'
 
 # Imgur
 image_link = ""
@@ -58,6 +54,7 @@ with open( 'imgur_credits.json' ) as imgur_credits_file:
 # Spreadsheets
 scope = [ 'https://spreadsheets.google.com/feeds' ]
 
+start_time = get_timestamp()
 while True :
 	ser.flush()
 	serial_string = ser.readline()
@@ -85,13 +82,13 @@ while True :
 			# Convert sequence to gif
 			call( [ 'mogrify', '-resize', '800x600', '*.jpg' ] )
 			print( '>>>> images resized' )
-			call( [ 'convert', '-delay', '25', '-loop', '0', '*.jpg', IMG_PATH ] )
+			call( [ 'convert', '-delay', '25', '-loop', '0', '*.jpg', GIF_PATH ] )
 			print( '>>>> gif created' )
 
 			# Upload image to imgur
 			imgur = pyimgur.Imgur( IMGUR_CLIENT_ID )
 			image_title = 'MakersBeehive ' + str( BEEHIVE_ID ) + ' | ' + timestamp
-			uploaded_image = imgur.upload_image( IMG_PATH, title = image_title )
+			uploaded_image = imgur.upload_image( GIF_PATH, title = image_title )
 			image_link = uploaded_image.link
 			print( '>>>> image uploaded at %s' % image_link )
 
@@ -105,11 +102,11 @@ while True :
 
 		print( '>>>> data uploaded: ' + str( row ) )
 
-		# call( [ 'sudo', 'shutdown', '-h', 'now' ] )
+		call( [ 'sudo', 'shutdown', '-h', 'now' ] )
 
 		# Wait 30 minutes
-		sleep( 1800 )
-		ser.flush()
+		# sleep( 1800 )
+		# ser.flush()
 
 	except Exception as e:
 		if e.__class__ != ValueError:
