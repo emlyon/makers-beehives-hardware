@@ -29,6 +29,11 @@ network={
     ssid="makerslab"
     psk="makerslab"
 }
+
+network={
+	ssid="EMLIOT"
+	psk="48hgu@Gw8!"
+}
 ```
 
 git clone:
