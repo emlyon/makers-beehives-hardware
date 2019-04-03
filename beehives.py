@@ -37,7 +37,8 @@ except:
 		ser = serial.Serial('/dev/ttyACM1', 115200)
 	except:
 		print('Unable to comunicate with arduino on Serial port')
-		reboot()
+		# reboot()
+		call(['sudo', 'shutdown', '-h', 'now'])
 		sleep(10)
 
 # PiCamera
@@ -108,15 +109,17 @@ while True :
 		# ser.flush()
 
 	except Exception as e:
-		if e.__class__ != ValueError:
-			print('>>>> SOMETHING WENT WRONG')
-			print(str(e))
-			# reboot()
+		call(['sudo', 'shutdown', '-h', 'now'])
+
+		# if e.__class__ != ValueError:
+		# 	print('>>>> SOMETHING WENT WRONG')
+		# 	print(str(e))
+		# 	# reboot()
 			
-			template = "An exception of type {0} occured"
-			message = template.format(type(e).__name__)
-			print message
-			# Wait 1 minute
-			sleep(60)
-			ser.flush()
-		pass
+		# 	template = "An exception of type {0} occured"
+		# 	message = template.format(type(e).__name__)
+		# 	print message
+		# 	# Wait 1 minute
+		# 	sleep(60)
+		# 	ser.flush()
+		# pass
