@@ -29,6 +29,11 @@ def reboot():
     output = process.communicate()[0]
     print output
 
+def shutdown():
+	call(['sudo', 'shutdown', '-h', 'now'])
+	sleep(10)
+
+
 # Init Serial
 try:
 	ser = serial.Serial('/dev/ttyACM0', 115200)
@@ -37,12 +42,20 @@ except:
 		ser = serial.Serial('/dev/ttyACM1', 115200)
 	except:
 		print('Unable to comunicate with arduino on Serial port')
-		# reboot()
-		call(['sudo', 'shutdown', '-h', 'now'])
-		sleep(10)
+		shutdown()
 
 # PiCamera
-camera = picamera.PiCamera()
+try:
+	camera = picamera.PiCamera()
+except:
+	print('Unable to start camera')
+	# shutdown()
+
+capture_done = False
+resize_done = False
+gif_done = False
+gif_uploaded = False
+
 GIF_PATH = 'capture.gif'
 
 # Imgur
@@ -71,26 +84,36 @@ while True :
 		# Check light before taking pics (no night vision)
 		if serial_data['light'] != '0.00Lux' :
 			# Capture sequence
-			for i in range(20) :
-				img_title = str(i) + '.jpg'
-				# Capture image
-				camera.capture(img_title)
-				print('>>>> image %d captured' % i)
+			if capture_done is not True:
+				for i in range(20) :
+					img_title = str(i) + '.jpg'
+					# Capture image
+					camera.capture(img_title)
+					print('>>>> image %d captured' % i)
 
-				sleep(0.5)
+					sleep(0.5)
+				capture_done = True
 
+			# Resize images
+			if resize_done is not True:
+				call(['mogrify', '-resize', '800x600', '*.jpg'])
+				print('>>>> images resized')
+				resize_done = True
+			
 			# Convert sequence to gif
-			call(['mogrify', '-resize', '800x600', '*.jpg'])
-			print('>>>> images resized')
-			call(['convert', '-delay', '25', '-loop', '0', '*.jpg', GIF_PATH])
-			print('>>>> gif created')
+			if gif_done is not True:
+				call(['convert', '-delay', '25', '-loop', '0', '*.jpg', GIF_PATH])
+				print('>>>> gif created')
+				gif_done = True
 
 			# Upload image to imgur
-			imgur = pyimgur.Imgur(IMGUR_CLIENT_ID)
-			image_title = 'MakersBeehive ' + str(BEEHIVE_ID) + ' | ' + timestamp
-			uploaded_image = imgur.upload_image(GIF_PATH, title = image_title)
-			image_link = uploaded_image.link
-			print('>>>> image uploaded at %s' % image_link)
+			if gif_uploaded is not True:
+				imgur = pyimgur.Imgur(IMGUR_CLIENT_ID)
+				image_title = 'MakersBeehive ' + str(BEEHIVE_ID) + ' | ' + timestamp
+				uploaded_image = imgur.upload_image(GIF_PATH, title = image_title)
+				image_link = uploaded_image.link
+				print('>>>> image uploaded at %s' % image_link)
+				gif_uploaded = True
 
 		# Upload data to spreadsheet
 		creds = ServiceAccountCredentials.from_json_keyfile_name('spreadsheet_credits.json', scope)
@@ -112,13 +135,11 @@ while True :
 		if e.__class__ != ValueError:
 		 	print('>>>> SOMETHING WENT WRONG')
 		 	print(str(e))
-		 	# reboot()
-			call(['sudo', 'shutdown', '-h', 'now'])
 			
 		 	template = "An exception of type {0} occured"
 		 	message = template.format(type(e).__name__)
 		 	print message
-		 	# Wait 1 minute
-		 	sleep(60)
-		 	ser.flush()
+
+		 	# reboot()
+			shutdown()
 		pass
