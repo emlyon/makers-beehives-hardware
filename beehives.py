@@ -47,6 +47,7 @@ except:
 try:
 	camera = picamera.PiCamera()
 except:
+	print('Unable to start camera')
 	shutdown()
 
 GIF_PATH = 'capture.gif'
@@ -68,7 +69,7 @@ gif_uploaded = False
 while True :
 	ser.flush()
 	serial_string = ser.readline()
-	# print('>>>> incoming serial_string: %s' % serial_string)
+	print('>>>> incoming serial_string: %s' % serial_string)
 
 	timestamp = get_timestamp()
 	print("[%s]" % timestamp)
