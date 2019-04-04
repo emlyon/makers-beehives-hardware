@@ -12,8 +12,6 @@ Raspberry pi script for uploading data from Makers'Beehives
 sudo apt-get update
 sudo apt-get install git python-picamera imagemagick
 sudo pip install pyserial pyimgur gspread oauth2client
-cd
-git clone https://github.com/emlyon/MakersBeehives-PI.git
 ```
 - [pySerial](http://pythonhosted.org/pyserial/shortintro.html)
 - [PiCamera](https://www.raspberrypi.org/documentation/usage/camera/python/README.md)
