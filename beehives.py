@@ -58,7 +58,7 @@ scope = ['https://spreadsheets.google.com/feeds']
 while True :
 	ser.flush()
 	serial_string = ser.readline()
-	# print('>>>> incoming serial_string: %s' % serial_string)
+	print('>>>> incoming serial_string: %s' % serial_string)
 
 	timestamp = get_timestamp()
 	print("[%s]" % timestamp)
@@ -109,17 +109,16 @@ while True :
 		# ser.flush()
 
 	except Exception as e:
-		call(['sudo', 'shutdown', '-h', 'now'])
-
-		# if e.__class__ != ValueError:
-		# 	print('>>>> SOMETHING WENT WRONG')
-		# 	print(str(e))
-		# 	# reboot()
+		if e.__class__ != ValueError:
+		 	print('>>>> SOMETHING WENT WRONG')
+		 	print(str(e))
+		 	# reboot()
+			call(['sudo', 'shutdown', '-h', 'now'])
 			
-		# 	template = "An exception of type {0} occured"
-		# 	message = template.format(type(e).__name__)
-		# 	print message
-		# 	# Wait 1 minute
-		# 	sleep(60)
-		# 	ser.flush()
-		# pass
+		 	template = "An exception of type {0} occured"
+		 	message = template.format(type(e).__name__)
+		 	print message
+		 	# Wait 1 minute
+		 	sleep(60)
+		 	ser.flush()
+		pass
