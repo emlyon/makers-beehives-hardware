@@ -1,49 +1,10 @@
 # MakersBeehives-Phardware
+Raspberry pi script for uploading data from Makers'Beehives
 
 ![](beehive-diagram.png)
 
-## Raspberry Pi config
-remove auto-start from /etc/rc.local
-```
-sudo nano /etc/rc.local
-```
-(add a `#` at the beginning of `su bee -c 'cd /home/bee/makersbeehives-pi/ && python beehives.py < /$`)
-
-auto start and git pull using crontab
-```
-crontab -e
-```
-select nano `2`  
-and add:
-```
-@reboot sleep 10 && cd /home/bee/makers-beehives-hardware && echo `{ git pull && echo '{"result":"up to date"}' > /home/bee/git_status.json ; } || echo '{"result":"could not update"}' > /home/bee/git_status.json` && python beehives.py
-```
-
-config wifi:
-```
-sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
-```
-
-```
-network={
-    ssid="makerslab"
-    psk="makerslab"
-}
-```
-
-git clone:
-```
-cd && git clone https://github.com/emlyon/makers-beehives-hardware.git
-```
-
-
-Raspberry pi script for uploading data from Makers'Beehives
-
-Based on Smart Citizen Kit: https://smartcitizen.me/  
-Upload `sck_ruches_firmware` to Smart Citizen Kit via Arduino software
-
-### Enable RaspiCam
-Type ```sudo raspi-config``` and enable RaspiCam
+### Clone repository:
+```cd && git clone https://github.com/emlyon/makers-beehives-hardware.git```
 
 
 ### Install dependencies
@@ -61,6 +22,21 @@ git clone https://github.com/emlyon/MakersBeehives-PI.git
 - [gspread: Google Spreadsheets Python API](https://github.com/burnash/gspread)
     - Google Spreadsheets and Python: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html
 
+
+## Raspberry Pi config
+
+### Enable RaspiCam
+Type ```sudo raspi-config``` and enable RaspiCam
+
+### Configure Wifi:
+```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
+and add
+```
+network={
+    ssid="makerslab"
+    psk="makerslab"
+}
+```
 
 ### Imgur & Google spreadsheets credits:
 Go to https://api.imgur.com/oauth2/addclient to register an app then create `imgur_credits.json` formatted as follows:
