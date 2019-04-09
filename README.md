@@ -11,14 +11,17 @@ Raspberry pi script for uploading data from Makers'Beehives
 ```
 sudo apt-get update
 sudo apt-get install git python-picamera imagemagick
-sudo pip install pyserial pyimgur gspread oauth2client
+sudo pip install pyserial pyimgur requests
 ```
 - [pySerial](http://pythonhosted.org/pyserial/shortintro.html)
 - [PiCamera](https://www.raspberrypi.org/documentation/usage/camera/python/README.md)
 - [imagemagick](http://makio135.tumblr.com/post/159262507202/resize-image-from-cli-with-imagemagick)
 - [PyImgur](https://github.com/Damgaard/PyImgur)
+- [Requests](http://docs.python-requests.org/en/master/)
+<!-- 
 - [gspread: Google Spreadsheets Python API](https://github.com/burnash/gspread)
-    - Google Spreadsheets and Python: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html
+    - Google Spreadsheets and Python: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html 
+-->
 
 
 ## Raspberry Pi config

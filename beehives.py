@@ -6,8 +6,7 @@ import serial
 import json
 import picamera
 import pyimgur
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+import requests
 import socket
 from subprocess import call
 from time import sleep
@@ -30,7 +29,9 @@ def reboot():
     print output
 
 def shutdown():
-	call(['sudo', 'shutdown', '-h', 'now'])
+	call('cd /home/bee/makers-bbehives-hardware && git pull'.split())
+	sleep(5)
+	call('sudo shutdown -h now'.split())
 	sleep(10)
 
 # Init Serial
@@ -112,27 +113,27 @@ while True :
 				image_link = uploaded_image.link
 				print('>>>> image uploaded at %s' % image_link)
 				gif_uploaded = True
+		
+		else:
+			image_link = 'http://placehold.it/800x533/000000/444444?text=No+Light'
 
 		# Upload data to spreadsheet
-		creds = ServiceAccountCredentials.from_json_keyfile_name('spreadsheet_credits.json', scope)
-		client = gspread.authorize(creds)
-		sheet = client.open('beehives').get_worksheet(BEEHIVE_ID)
-		row = [timestamp, serial_string, image_link]
-		index = 1
-		sheet.insert_row(row, index)
-
-		print('>>>> data uploaded: ' + str(row))
+		API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw61xdBYnNVJI7AEDuUay7il1hTATextokstUNsuIy3jjE-vViu/exec'
+		data = {'beehive_id': BEEHIVE_ID, 'serial_string': serial_string, 'image_link': image_link}
+		r = requests.post(url = API_ENDPOINT, data = data)
+		print('>>>> data uploaded:%s' % r.text)
 
 		shutdown()
 
 	except Exception as e:
-		if e.__class__ != ValueError:
-			print('>>>> SOMETHING WENT WRONG')
-			print(str(e))
-			
-			template = "An exception of type {0} occured"
-			message = template.format(type(e).__name__)
-			print message
+		print('>>>> SOMETHING WENT WRONG')
+		print(str(e))
+		template = "An exception of type {0} occured"
+		message = template.format(type(e).__name__)
+		print message
 
+		# Shutdown if error is not due to incomplete JSON parsing
+		if e.__class__ != ValueError:
 			shutdown()
+
 		pass
