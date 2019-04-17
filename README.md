@@ -18,16 +18,11 @@ sudo pip install pyserial pyimgur requests
 - [imagemagick](http://makio135.tumblr.com/post/159262507202/resize-image-from-cli-with-imagemagick)
 - [PyImgur](https://github.com/Damgaard/PyImgur)
 - [Requests](http://docs.python-requests.org/en/master/)
-<!-- 
-- [gspread: Google Spreadsheets Python API](https://github.com/burnash/gspread)
-    - Google Spreadsheets and Python: https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html 
--->
-
 
 ## Raspberry Pi config
 
 ### Enable RaspiCam
-Type ```sudo raspi-config``` and enable RaspiCam
+Type ```sudo raspi-config``` and enable RaspiCam: `Interfacing Options` -> `Camera` -> `Yes`
 
 ### Configure Wifi:
 ```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
