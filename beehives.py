@@ -29,8 +29,6 @@ def reboot():
     print output
 
 def shutdown():
-	call('cd /home/bee/makers-bbehives-hardware && git pull'.split())
-	sleep(5)
 	call('sudo shutdown -h now'.split())
 	sleep(10)
 
@@ -123,6 +121,9 @@ while True :
 		r = requests.post(url = API_ENDPOINT, data = data)
 		print('>>>> data uploaded:%s' % r.text)
 
+		call('cd /home/bee/makers-beehives-hardware && git pull'.split())
+		sleep(10)
+		
 		shutdown()
 
 	except Exception as e:
