@@ -14,6 +14,8 @@ from time import sleep
 hostname = socket.gethostname()
 BEEHIVE_ID = int(hostname[-1])
 
+print('test')
+
 # Timestamp
 def get_timestamp():
 	ts = time.time()
