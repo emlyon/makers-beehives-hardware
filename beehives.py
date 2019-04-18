@@ -8,6 +8,7 @@ import picamera
 import pyimgur
 import requests
 import socket
+import os
 from subprocess import call
 from time import sleep
 
@@ -123,7 +124,7 @@ while True :
 		r = requests.post(url = API_ENDPOINT, data = data)
 		print('>>>> data uploaded:%s' % r.text)
 
-		call('cd /home/bee/makers-beehives-hardware && git pull'.split())
+		os.system('cd /home/bee/makers-beehives-hardware && git pull')
 		sleep(10)
 		
 		shutdown()
