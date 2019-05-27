@@ -1,11 +1,17 @@
-# MakersBeehives-Phardware
-Raspberry pi script for uploading data from Makers'Beehives
+# makers' beehives - hardware
 
 ![](beehive-diagram.png)
 
+
+## Alimentation
+- [ECO-WORTHY 25W 12V Polycrystalline Solar Panel Module Charging RV Boat](https://www.eco-worthy.com/catalog/worthy-polycrystalline-solar-panel-module-charging-boat-p-455.html)
+- [UBEC DC/DC Step-Down (Buck) Converter - 5V @ 3A output](https://www.adafruit.com/product/1385)
+- [Tecknet 33000mAh powerbank](http://www.tecknet.co.uk/bluetek.html)
+
+## Raspberry Pi config
+
 ### Clone repository:
 ```cd && git clone https://github.com/emlyon/makers-beehives-hardware.git```
-
 
 ### Install dependencies
 ```
@@ -18,8 +24,6 @@ sudo pip install pyserial pyimgur requests
 - [imagemagick](http://makio135.tumblr.com/post/159262507202/resize-image-from-cli-with-imagemagick)
 - [PyImgur](https://github.com/Damgaard/PyImgur)
 - [Requests](http://docs.python-requests.org/en/master/)
-
-## Raspberry Pi config
 
 ### Enable RaspiCam
 Type ```sudo raspi-config``` and enable RaspiCam: `Interfacing Options` -> `Camera` -> `Yes`
