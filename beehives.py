@@ -132,6 +132,11 @@ while True :
 		beehive_data.push(data)
 		print('>>>> data pushed to firebase')
 
+		os.system('cd /home/bee/makers-beehives-hardware && git pull')
+		sleep(10)
+
+		shutdown()
+
 	except Exception as e:
 		print('>>>> SOMETHING WENT WRONG')
 		print(str(e))
