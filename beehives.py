@@ -126,7 +126,7 @@ while True :
 
 		print('>>>> trying to push data to firebase')
 		beehive_data = db.reference('beehives/{0}/data'.format(BEEHIVE_ID))
-		data = {'dateTime': timestamp, 'serialString': serial_string, 'imageLink': image_link}
+		data = {'dateTime': timestamp, 'imageLink': image_link, **serial_data, 'serialString': serial_string}
 		beehive_data.push(data)
 		print('>>>> data pushed to firebase')
 
