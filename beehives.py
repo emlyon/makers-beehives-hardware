@@ -6,11 +6,14 @@ import serial
 import json
 import picamera
 import pyimgur
-import requests
 import socket
 import os
 from subprocess import call
 from time import sleep
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 
 hostname = socket.gethostname()
 BEEHIVE_ID = int(hostname[-1])
@@ -115,11 +118,6 @@ while True :
 			image_link = 'http://placehold.it/800x533/000000/444444?text=No+Light'
 
 		# Upload data to firebase
-
-		from firebase_admin import db
-		import firebase_admin
-		from firebase_admin import credentials
-
 		cred = credentials.Certificate("firebase-secrets.json")
 
 		firebase_admin.initialize_app(cred, {
