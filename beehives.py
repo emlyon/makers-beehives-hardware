@@ -30,7 +30,7 @@ def reboot():
     import subprocess
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     output = process.communicate()[0]
-    print output
+    print(output)
 
 def shutdown():
 	call('sudo shutdown -h now'.split())
@@ -126,7 +126,7 @@ while True :
 
 		print('>>>> trying to push data to firebase')
 		beehive_data = db.reference('beehives/{0}/data'.format(BEEHIVE_ID))
-		data = {'serial_string': serial_string, 'image_link': image_link}
+		data = {'dateTime': timestamp, 'serialString': serial_string, 'imageLink': image_link}
 		beehive_data.push(data)
 		print('>>>> data pushed to firebase')
 
@@ -140,7 +140,7 @@ while True :
 		print(str(e))
 		template = "An exception of type {0} occured"
 		message = template.format(type(e).__name__)
-		print message
+		print(message)
 
 		# Shutdown if error is not due to incomplete JSON parsing
 		if e.__class__ != ValueError:
