@@ -36,7 +36,7 @@ def shutdown():
 # Init Serial
 try:
 	ser = serial.Serial('/dev/ttyACM0', 115200)
-except: 
+except:
 	try:
 		ser = serial.Serial('/dev/ttyACM1', 115200)
 	except:
@@ -59,9 +59,7 @@ with open('imgur_credits.json') as imgur_credits_file:
 	imgur_credits = json.load(imgur_credits_file)
 	IMGUR_CLIENT_ID = imgur_credits['imgurClientID']
 
-# Spreadsheets
-scope = ['https://spreadsheets.google.com/feeds']
-
+# Read and upload data
 capture_done = False
 images_resized = False
 gif_created = False
@@ -97,7 +95,7 @@ while True :
 				call(['mogrify', '-resize', '800x600', '*.jpg'])
 				print('>>>> images resized')
 				images_resized = True
-			
+
 			# Create gif
 			if gif_created is not True:
 				call(['convert', '-delay', '25', '-loop', '0', '*.jpg', GIF_PATH])
@@ -112,20 +110,27 @@ while True :
 				image_link = uploaded_image.link
 				print('>>>> image uploaded at %s' % image_link)
 				gif_uploaded = True
-		
+
 		else:
 			image_link = 'http://placehold.it/800x533/000000/444444?text=No+Light'
 
-		# Upload data to spreadsheet
-		API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw61xdBYnNVJI7AEDuUay7il1hTATextokstUNsuIy3jjE-vViu/exec'
-		data = {'beehive_id': BEEHIVE_ID, 'serial_string': serial_string, 'image_link': image_link}
-		r = requests.post(url = API_ENDPOINT, data = data)
-		print('>>>> data uploaded:%s' % r.text)
+		# Upload data to firebase
 
-		os.system('cd /home/bee/makers-beehives-hardware && git pull')
-		sleep(10)
-		
-		shutdown()
+		from firebase_admin import db
+		import firebase_admin
+		from firebase_admin import credentials
+
+		cred = credentials.Certificate("firebase-secrets.json")
+
+		firebase_admin.initialize_app(cred, {
+				'databaseURL': 'https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/'
+		})
+
+		print('>>>> trying to push data to firebase')
+		beehive_data = db.reference('beehives/{0}/data'.format(BEEHIVE_ID))
+		data = {'serial_string': serial_string, 'image_link': image_link}
+		beehive_data.push(data)
+		print('>>>> data pushed to firebase')
 
 	except Exception as e:
 		print('>>>> SOMETHING WENT WRONG')
