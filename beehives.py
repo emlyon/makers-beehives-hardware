@@ -145,7 +145,7 @@ while True:
         beehive_data = {
             "dateTime": timestamp,
             "imageLink": image_link,
-            **serial_data,
+            "sensors": serial_data,
             "serialString": serial_string,
         }
         upload_data(beehive_data)
