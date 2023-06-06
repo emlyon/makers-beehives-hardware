@@ -41,6 +41,25 @@ def shutdown():
     sleep(10)
 
 
+# Firebase init
+cred = credentials.Certificate("firebase-secrets.json")
+
+firebase_admin.initialize_app(
+    cred,
+    {
+        "databaseURL": "https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/"
+    },
+)
+
+
+# Upload data to firebase
+def upload_data(data):
+    print(">>>> trying to push data to firebase")
+    beehive_data = db.reference("beehives/{0}/data".format(BEEHIVE_ID))
+    beehive_data.push(data)
+    print(">>>> data pushed to firebase")
+
+
 # Init Serial
 try:
     ser = serial.Serial("/dev/ttyACM0", 115200)
@@ -123,25 +142,13 @@ while True:
             image_link = "http://placehold.it/800x533/000000/444444?text=No+Light"
 
         # Upload data to firebase
-        cred = credentials.Certificate("firebase-secrets.json")
-
-        firebase_admin.initialize_app(
-            cred,
-            {
-                "databaseURL": "https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/"
-            },
-        )
-
-        print(">>>> trying to push data to firebase")
-        beehive_data = db.reference("beehives/{0}/data".format(BEEHIVE_ID))
-        data = {
+        beehive_data = {
             "dateTime": timestamp,
             "imageLink": image_link,
             **serial_data,
             "serialString": serial_string,
         }
-        beehive_data.push(data)
-        print(">>>> data pushed to firebase")
+        upload_data(beehive_data)
 
         os.system("cd /home/bee/makers-beehives-hardware && git pull")
         sleep(10)
