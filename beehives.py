@@ -6,7 +6,7 @@ import serial
 import json
 import picamera
 import pyimgur
-import socket
+import getpass
 import os
 from subprocess import call
 from time import sleep
@@ -15,8 +15,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-hostname = socket.gethostname()
-BEEHIVE_ID = int(hostname[-1])
+BEEHIVE_ID = getpass.getuser()
 
 
 # Timestamp
@@ -24,6 +23,11 @@ def get_timestamp():
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
     return st
+
+
+# Use absolute path to enable access from outside the script's directory
+def filepath(relative_path):
+    return os.path.join(os.path.dirname(__file__), relative_path)
 
 
 # Reboot from python
@@ -42,7 +46,7 @@ def shutdown():
 
 
 # Firebase init
-cred = credentials.Certificate("firebase-secrets.json")
+cred = credentials.Certificate(filepath("firebase-secrets.json"))
 
 firebase_admin.initialize_app(
     cred,
@@ -82,9 +86,9 @@ GIF_PATH = "capture.gif"
 # Imgur
 image_link = ""
 IMGUR_CLIENT_ID = ""
-with open("imgur_credits.json") as imgur_credits_file:
-    imgur_credits = json.load(imgur_credits_file)
-    IMGUR_CLIENT_ID = imgur_credits["imgurClientID"]
+with open(filepath("imgur-secrets.json")) as imgur_secrets_file:
+    imgur_secrets = json.load(imgur_secrets_file)
+    IMGUR_CLIENT_ID = imgur_secrets["imgurClientID"]
 
 # Read and upload data
 capture_done = False
