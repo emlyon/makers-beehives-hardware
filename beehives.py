@@ -4,6 +4,7 @@ import time
 import datetime
 import serial
 import json
+import re
 import picamera
 import pyimgur
 import getpass
@@ -74,6 +75,24 @@ except:
         print("Unable to comunicate with arduino on Serial port")
         shutdown()
 
+
+def read_serial_data():
+    ser.flush()
+    serial_string = ser.readline()  # read complete line from serial output
+    # while not "\\r\\n" in str(serial_string):  # check if full data is received.
+    # Matching end of line was not enough :
+    # Sometimes the serial output is not complete and the beginning of the string is missing.
+    while not re.search("\{.*}", str(serial_string)):
+        time.sleep(0.001)  # delay of 1ms
+        serial_string = ser.readline()
+        print(serial_string)
+    print(">>>> incoming serial_string: %s" % serial_string)
+    serial_string = serial_string.decode("utf-8").rstrip()
+    serial_data = json.loads(serial_string)
+    print(">>>> parsed serial_data: %s" % serial_data)
+    return serial_data
+
+
 # PiCamera
 try:
     camera = picamera.PiCamera()
@@ -96,17 +115,11 @@ images_resized = False
 gif_created = False
 gif_uploaded = False
 while True:
-    ser.flush()
-    serial_string = ser.readline().decode("utf-8")
-    print(">>>> incoming serial_string: %s" % serial_string)
-
-    timestamp = get_timestamp()
-    print("[%s]" % timestamp)
-
     try:
+        timestamp = get_timestamp()
+        print("[%s]" % timestamp)
         # Check if incoming data is parsable
-        serial_data = json.loads(serial_string)
-        print(">>>> parsed serial_data: %s" % serial_data)
+        serial_data = read_serial_data()
 
         # Check light before taking pics (no night vision)
         if serial_data["light"] != "0.00Lux":
