@@ -165,7 +165,8 @@ while True:
         }
         upload_data(beehive_data)
 
-        os.system("cd /home/bee/makers-beehives-hardware && git pull")
+        repository_path = filepath("")
+        os.system(f"cd {repository_path} && git pull")
         sleep(10)
 
         shutdown()
