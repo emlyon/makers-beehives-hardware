@@ -97,7 +97,7 @@ gif_created = False
 gif_uploaded = False
 while True:
     ser.flush()
-    serial_string = ser.readline()
+    serial_string = ser.readline().decode("utf-8")
     print(">>>> incoming serial_string: %s" % serial_string)
 
     timestamp = get_timestamp()
