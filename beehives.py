@@ -85,7 +85,6 @@ def read_serial_data():
     while not re.search("\{.*}", str(serial_string)):
         time.sleep(0.001)  # delay of 1ms
         serial_string = ser.readline()
-        print(serial_string)
     print(">>>> incoming serial_string: %s" % serial_string)
     serial_string = serial_string.decode("utf-8").rstrip()
     serial_data = json.loads(serial_string)
@@ -163,7 +162,6 @@ while True:
             "dateTime": timestamp,
             "imageLink": image_link,
             "sensors": serial_data,
-            "serialString": serial_string,
         }
         upload_data(beehive_data)
 
