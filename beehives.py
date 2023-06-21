@@ -89,7 +89,7 @@ def log_error(error, upload=True):
             upload_error(error_data)
         except Exception as e:
             print(">>>> unable to upload error to firebase")
-            log_error(e, timestamp, False)
+            log_error(e, False)
 
 
 # Init Serial
@@ -196,7 +196,7 @@ while True:
         os.system(f"cd {repository_path} && git pull")
         sleep(10)
 
-        sys.exit("Exiting after error...")
+        sys.exit("Exiting after end of cycle...")
 
     except Exception as e:
         print(">>>> SOMETHING WENT WRONG")
