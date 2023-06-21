@@ -79,6 +79,7 @@ def log_error(error, upload=True):
     errorType = type(error).__name__
     errorMessage = str(error)
     print(">>>> logging error")
+    print(f"Type: {errorType}\nMessage: {errorMessage}\nDateTime: {timestamp}")
     error_data = {"type": errorType, "message": errorMessage, "dateTime": timestamp}
     with open(filepath("error.log"), "a") as error_log:
         error_log.write(str(error_data) + "\n")
@@ -200,10 +201,7 @@ while True:
     except Exception as e:
         print(">>>> SOMETHING WENT WRONG")
         print(str(e))
-        template = "An exception of type {0} occured"
-        message = template.format(type(e).__name__)
-        print(message)
-        log_error(message)
+        log_error(e)
 
         # Shutdown if error is not due to incomplete JSON parsing
         if e.__class__ != ValueError:
