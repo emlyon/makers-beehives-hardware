@@ -65,6 +65,31 @@ def upload_data(data):
     print(">>>> data pushed to firebase")
 
 
+# Send error to firebase
+def upload_error(error_data):
+    print(">>>> sending error to firebase")
+    db.reference("errors").push(error_data)
+    print(">>>> error sent to firebase")
+
+
+# Log error in file and if possible upload it to firebase
+def log_error(error, upload=True):
+    timestamp = get_timestamp()
+    errorType = type(error).__name__
+    errorMessage = str(error)
+    print(">>>> logging error")
+    error_data = {"type": errorType, "message": errorMessage, "dateTime": timestamp}
+    with open(filepath("error.log"), "a") as error_log:
+        error_log.write(str(error_data) + "\n")
+    print(">>>> error logged")
+    if upload is True:
+        try:
+            upload_error(error_data)
+        except Exception as e:
+            print(">>>> unable to upload error to firebase")
+            log_error(e, timestamp, False)
+
+
 # Init Serial
 try:
     ser = serial.Serial("/dev/ttyACM0", 115200)
@@ -177,6 +202,7 @@ while True:
         template = "An exception of type {0} occured"
         message = template.format(type(e).__name__)
         print(message)
+        log_error(message)
 
         # Shutdown if error is not due to incomplete JSON parsing
         if e.__class__ != ValueError:

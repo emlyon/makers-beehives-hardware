@@ -3,3 +3,4 @@ firebase-secrets.json
 emliot.json
 *.jpg
 *.gif
+*.log
