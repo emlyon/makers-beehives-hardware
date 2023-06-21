@@ -9,6 +9,7 @@ import picamera
 import pyimgur
 import getpass
 import os
+import sys
 from subprocess import call
 from time import sleep
 
@@ -98,7 +99,7 @@ except:
         ser = serial.Serial("/dev/ttyACM1", 115200)
     except:
         print("Unable to comunicate with arduino on Serial port")
-        shutdown()
+        sys.exit("Exiting after error...")
 
 
 def read_serial_data():
@@ -122,7 +123,7 @@ try:
     camera = picamera.PiCamera()
 except:
     print("Unable to start camera")
-    shutdown()
+    sys.exit("Exiting after error...")
 
 GIF_PATH = "capture.gif"
 
@@ -206,6 +207,6 @@ while True:
 
         # Shutdown if error is not due to incomplete JSON parsing
         if e.__class__ != ValueError:
-            shutdown()
+            sys.exit("Exiting after error...")
 
         pass
