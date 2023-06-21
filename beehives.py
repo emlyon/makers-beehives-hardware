@@ -195,7 +195,7 @@ while True:
         os.system(f"cd {repository_path} && git pull")
         sleep(10)
 
-        shutdown()
+        sys.exit("Exiting after error...")
 
     except Exception as e:
         print(">>>> SOMETHING WENT WRONG")
