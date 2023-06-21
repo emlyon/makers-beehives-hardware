@@ -47,17 +47,6 @@ def shutdown():
     sleep(10)
 
 
-# Firebase init
-cred = credentials.Certificate(filepath("firebase-secrets.json"))
-
-firebase_admin.initialize_app(
-    cred,
-    {
-        "databaseURL": "https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/"
-    },
-)
-
-
 # Upload data to firebase
 def upload_data(data):
     print(">>>> trying to push data to firebase")
@@ -92,17 +81,6 @@ def log_error(error, upload=True):
             log_error(e, False)
 
 
-# Init Serial
-try:
-    ser = serial.Serial("/dev/ttyACM0", 115200)
-except:
-    try:
-        ser = serial.Serial("/dev/ttyACM1", 115200)
-    except:
-        print("Unable to comunicate with arduino on Serial port")
-        sys.exit("Exiting after error...")
-
-
 def read_serial_data():
     ser.flush()
     serial_string = ser.readline()  # read complete line from serial output
@@ -118,6 +96,42 @@ def read_serial_data():
     print(">>>> parsed serial_data: %s" % serial_data)
     return serial_data
 
+
+def check_internet_connection():
+    import subprocess  # For executing a shell command
+
+    command = ["ping", "-c", "1", "google.com"]
+    return subprocess.call(command) == 0
+
+
+while True:
+    if check_internet_connection() is True:
+        print(">>>> internet connection")
+        break
+    else:
+        print(">>>> no internet connection")
+        sleep(5)
+
+
+# Firebase init
+cred = credentials.Certificate(filepath("firebase-secrets.json"))
+
+firebase_admin.initialize_app(
+    cred,
+    {
+        "databaseURL": "https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/"
+    },
+)
+
+# Init Serial
+try:
+    ser = serial.Serial("/dev/ttyACM0", 115200)
+except:
+    try:
+        ser = serial.Serial("/dev/ttyACM1", 115200)
+    except:
+        print("Unable to comunicate with arduino on Serial port")
+        sys.exit("Exiting after error...")
 
 # PiCamera
 try:
