@@ -1,5 +1,6 @@
-imgur_credits.json
-spreadsheet_credits.json
+imgur-secrets.json
+firebase-secrets.json
 emliot.json
 *.jpg
 *.gif
+*.log

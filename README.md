@@ -17,13 +17,13 @@
 ```
 sudo apt-get update
 sudo apt-get install git python-picamera imagemagick
-sudo pip install pyserial pyimgur requests
+sudo pip install pyserial pyimgur firebase_admin
 ```
 - [pySerial](http://pythonhosted.org/pyserial/shortintro.html)
 - [PiCamera](https://www.raspberrypi.org/documentation/usage/camera/python/README.md)
 - [imagemagick](http://makio135.tumblr.com/post/159262507202/resize-image-from-cli-with-imagemagick)
 - [PyImgur](https://github.com/Damgaard/PyImgur)
-- [Requests](http://docs.python-requests.org/en/master/)
+- [Access a firebase DB with Python SDK](https://firebase.blog/posts/2017/07/accessing-database-from-python-admin-sdk)
 
 ### Enable RaspiCam
 Type ```sudo raspi-config``` and enable RaspiCam: `Interfacing Options` -> `Camera` -> `Yes`
@@ -51,8 +51,8 @@ Download Spreadsheet credits as documented on https://www.twilio.com/blog/2017/0
 
 
 ### Run script on Boot
-```sudo nano /etc/rc.local```  
-Add this line before exit  
+```sudo nano /etc/rc.local```
+Add this line before exit
 ```su pi -c 'python /home/pi/MakersBeehives-PI/beehives.py < /dev/null &'```
 
 
