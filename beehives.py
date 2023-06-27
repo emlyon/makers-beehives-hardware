@@ -159,6 +159,7 @@ while True:
         timestamp = get_timestamp()
         print("[%s]" % timestamp)
         # Check if incoming data is parsable
+        ser.write(unicode("DATA?\n"))
         serial_data = read_serial_data()
 
         # Check light before taking pics (no night vision)
