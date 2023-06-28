@@ -91,6 +91,7 @@ def read_serial_data():
     while not re.search("\{.*}", str(serial_string)):
         print(f">>>> reading serial_string: {serial_string}")
         time.sleep(0.001)  # delay of 1ms
+        ser.write(str.encode("DATA?\n"))
         serial_string = ser.readline()
     print(">>>> incoming serial_string: %s" % serial_string)
     serial_string = serial_string.decode("utf-8").rstrip()
