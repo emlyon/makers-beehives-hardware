@@ -195,9 +195,20 @@ Create secret keys files within the repository:
 
 1. `firebase-secrets.json`
 
+```
+cd makers-beehives-hardware/
+touch firebase-secrets.json
+nano firebase-secrets.json
+```
+
 https://console.firebase.google.com/project/makerslab-beehives/settings/serviceaccounts/adminsdk
 
 2. `imgur-secrets.json`
+
+```
+touch imgur-secrets.json
+nano imgur-secrets.json
+```
 
 https://imgur.com/account/settings/apps
 ```
@@ -213,7 +224,9 @@ https://imgur.com/account/settings/apps
 ### Run script on Boot
 Edit the `.bashrc` file, which will enable to [run a script after autologin.](https://stackoverflow.com/questions/57253379/how-to-run-foreground-script-after-autologin-to-raspbian-cli)
 
-```nano .bashrc```
+```
+nano ~/.bashrc
+```
 
 Add this line at the bottom of the file :
 
