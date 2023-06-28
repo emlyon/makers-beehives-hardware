@@ -171,6 +171,10 @@ source "$HOME/.cargo/env"
 	pip install cryptography
 	```
 
+	This step will probably last quite a long time, while prompting the following information :
+
+> Building wheel for cryptography (PEP 517) ... |
+
 
 4. Enfin, on peut lancer l’installation de firebase_admin :
 
