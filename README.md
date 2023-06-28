@@ -18,7 +18,17 @@
 ### Turn the device on
 1. Insert the micro SD into the Raspberry Pi
 2. Plug a keyboard and a screen to the device.
-2. Plug the power supply : the device should boot now !
+3. Plug the power supply : the device should boot now !
+4. Follow the prompts :
+	- Keyboard configuration
+	- username : choose 'beeN', with N being the number of your beehive. This will be used to track the beehive's data.
+
+You might notice some intermittent warnings : "Undervoltage detected!".
+In that case :
+- check that you are using a 3A power supply.
+- check that there is no bad contact on the board
+If everything else keeps working, you can ignore them.
+
 
 ### Configure Wifi:
 Run
@@ -66,12 +76,13 @@ hostname -I
 ```
 
 The output should look like this :
+> 172.XX.XX.XX
 
 
+Then you should be able to connect from your computer :
 
-The on
 ```
-ssh pi@XXX.XXX.X.XX
+ssh beeN@172.XX.XX.XX
 ```
 
 ### Install dependencies
