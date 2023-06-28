@@ -41,19 +41,20 @@ and add
 ```
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
-country=FR
 network={
     ssid="makerslab"
     psk="makerslab"
 }
 ```
 
+Where `ssid` and `psk` are the Wi-Fi network's name and password.
+
 If you see the following message, you need some extra config to enable Wi-fi connection
 
-Wi-Fi is currently blocked by rfkill.
-Use raspi-config to set the country before use.
+> Wi-Fi is currently blocked by rfkill.
 
-https://raspberrypi.stackexchange.com/questions/123717/how-to-disable-wi-fi-is-currently-blocked-by-rfkill-message
+--> [Use raspi-config to set the country before use.](https://raspberrypi.stackexchange.com/questions/123717/how-to-disable-wi-fi-is-currently-blocked-by-rfkill-message)
+
 
 ### For an easier setup, use ssh connection
 That way, you can use your own computer to edit settings and code on the device.
@@ -61,7 +62,7 @@ That way, you can use your own computer to edit settings and code on the device.
 It is faster, you can use a decent text editor and use copy-paste.
 To do so, you need to use the same wifi network.
 
-[SSH Setup](https://medium.com/@thedyslexiccoder/how-to-remotely-access-a-raspberry-pi-on-a-mac-via-ssh-be285d418f54)
+[SSH Setup - full process](https://medium.com/@thedyslexiccoder/how-to-remotely-access-a-raspberry-pi-on-a-mac-via-ssh-be285d418f54)
 
 ```
 sudo raspi-config
