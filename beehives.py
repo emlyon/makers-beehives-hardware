@@ -90,7 +90,7 @@ def read_serial_data():
     # Sometimes the serial output is not complete and the beginning of the string is missing.
     while not re.search("\{.*}", str(serial_string)):
         print(f">>>> reading serial_string: {serial_string}")
-        time.sleep(0.001)  # delay of 1ms
+        time.sleep(0.1)  # delay of 100ms
         ser.write(str.encode("DATA?\n"))
         serial_string = ser.readline()
     print(">>>> incoming serial_string: %s" % serial_string)
