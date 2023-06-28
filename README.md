@@ -16,8 +16,9 @@
 3. Choose the last version of Raspberry Pi OS Lite and write it on SD card.
 
 ### Turn the device on
-1. Plug a keyboard and a screen to the device.
-2. Plug the power supply
+1. Insert the micro SD into the Raspberry Pi
+2. Plug a keyboard and a screen to the device.
+2. Plug the power supply : the device should boot now !
 
 ### Configure Wifi:
 Run
@@ -28,11 +29,21 @@ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
 
 and add
 ```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=FR
 network={
     ssid="makerslab"
     psk="makerslab"
 }
 ```
+
+If you see the following message, you need some extra config to enable Wi-fi connection
+
+Wi-Fi is currently blocked by rfkill.
+Use raspi-config to set the country before use.
+
+https://raspberrypi.stackexchange.com/questions/123717/how-to-disable-wi-fi-is-currently-blocked-by-rfkill-message
 
 ### For an easier setup, use ssh connection
 That way, you can use your own computer to edit settings and code on the device.
@@ -41,6 +52,27 @@ It is faster, you can use a decent text editor and use copy-paste.
 To do so, you need to use the same wifi network.
 
 [SSH Setup](https://medium.com/@thedyslexiccoder/how-to-remotely-access-a-raspberry-pi-on-a-mac-via-ssh-be285d418f54)
+
+```
+sudo raspi-config
+```
+1. Interface Options
+2. I2 SSH > Enable SSH
+
+Get the hostname :
+
+```
+hostname -I
+```
+
+The output should look like this :
+
+
+
+The on
+```
+ssh pi@XXX.XXX.X.XX
+```
 
 ### Install dependencies
 ```
@@ -57,20 +89,50 @@ sudo apt-get install git
 
 #### pip
 Python package manager
-`sudo apt install python3-pip`
 
-- [pySerial](http://pythonhosted.org/pyserial/shortintro.html)
-- [PiCamera](https://www.raspberrypi.org/documentation/usage/camera/python/README.md)
-- [imagemagick](http://makio135.tumblr.com/post/159262507202/resize-image-from-cli-with-imagemagick)
-- [PyImgur](https://github.com/Damgaard/PyImgur)
-- [Access a firebase DB with Python SDK](https://firebase.blog/posts/2017/07/accessing-database-from-python-admin-sdk)
+```
+sudo apt install python3-pip
+```
+
+#### PySerial
+
+Enables serial communication on Pi.
+
+[pySerial](http://pythonhosted.org/pyserial/shortintro.html)
 
 
 #### PiCamera
 
-`sudo pip install picamera`
+[Picamera - Doc](https://www.raspberrypi.org/documentation/usage/camera/python/README.md)
+
+```
+sudo pip install picamera
+```
+
+#### imageMagick
+
+Enables image manipulation.
+
+[Resize image from CLI with imagemagick](http://makio135.tumblr.com/post/159262507202/resize-image-from-cli-with-imagemagick)
+[Doc - imageMagick CLI](https://imagemagick.org/script/command-line-processing.php)
+
+```
+sudo apt-get install imagemagick
+```
+
+#### PyImgur
+
+Enables the upload of pictures (and gifs) on Imgur.
+
+[PyImgur - Doc](https://github.com/Damgaard/PyImgur)
+
+```
+pip install pyimgur
+```
 
 #### firebase_admin
+
+[Access a firebase DB with Python SDK](https://firebase.blog/posts/2017/07/accessing-database-from-python-admin-sdk)
 
 1. Parmi les dépendances de firebase admin, on trouve le paquet [**cryptography**](https://cryptography.io/en/latest/installation/), dont firebase exige une version récente *(cryptography>=3.4.0)*
 2. Les dernières version de ce paquet ont besoin d’une version récente du langage Rust ****(This package requires Rust >=1.56.0.)****
