@@ -83,15 +83,18 @@ def log_error(error, upload=True):
 
 def read_serial_data():
     ser.flush()
+    ser.write(str.encode("DATA?\n"))
     serial_string = ser.readline()  # read complete line from serial output
     # while not "\\r\\n" in str(serial_string):  # check if full data is received.
     # Matching end of line was not enough :
     # Sometimes the serial output is not complete and the beginning of the string is missing.
     while not re.search("\{.*}", str(serial_string)):
+        print(f">>>> reading serial_string: {serial_string}")
         time.sleep(0.001)  # delay of 1ms
         serial_string = ser.readline()
     print(">>>> incoming serial_string: %s" % serial_string)
     serial_string = serial_string.decode("utf-8").rstrip()
+    print(">>>> decoded serial_string: %s" % serial_string)
     serial_data = json.loads(serial_string)
     print(">>>> parsed serial_data: %s" % serial_data)
     return serial_data
@@ -159,7 +162,6 @@ while True:
         timestamp = get_timestamp()
         print("[%s]" % timestamp)
         # Check if incoming data is parsable
-        ser.write(str.encode("DATA?\n"))
         serial_data = read_serial_data()
 
         # Check light before taking pics (no night vision)

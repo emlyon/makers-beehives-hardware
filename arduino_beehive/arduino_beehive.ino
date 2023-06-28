@@ -117,30 +117,30 @@ void loop()
             switch (i)
             {
             case 0: // Temperature
-                Serial.print(temp);
+                Serial.print("\"" + String(temp));
                 break;
             case 1: // Humidity
-                Serial.print(hum);
+                Serial.print("\"" + String(hum));
                 break;
             case 2: // Light
-                Serial.print(light);
+                Serial.print("\"" + String(light));
                 break;
             case 3: // Carbon Monxide
-                Serial.print(co);
+                Serial.print("\"" + String(co));
                 break;
             case 4: // Nitrogen Dioxide
-                Serial.print(no2);
+                Serial.print("\"" + String(no2));
                 break;
             case 5: // Noise
-                Serial.print(noise);
+                Serial.print("\"" + String(noise));
                 break;
-            case 6: // Weigh
-                Serial.print(weight);
+            case 6: // Weight
+                Serial.print("\"" + String(weight));
                 break;
             default:
                 break;
             }
-            Serial.print(UNITS[i]);
+            Serial.print(String(UNITS[i]) + "\"");
         }
         Serial.println(KEYS[7]);
     }
@@ -185,4 +185,14 @@ void loop()
         Serial.println("Error, try again");
     }
     delay(5000);
+}
+
+void valueOutput(value)
+{
+    return "\"" + value
+}
+
+void unitOutput(unit)
+{
+    return "\"" + unit
 }
