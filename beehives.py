@@ -142,6 +142,22 @@ except:
 
 GIF_PATH = "capture.gif"
 
+
+def take_picture(img_nb, nb_retries=0):
+    img_title = str(img_nb) + ".jpg"
+    try:
+        camera.capture(img_title)
+        print(">>>> image %s captured" % img_title)
+    except picamera.PiCameraError as e:
+        print("Something went wrong with the camera")
+        log_error(e)
+        nb_retries += 1
+        if nb_retries < 3:
+            take_picture(img_title, nb_retries)
+        else:
+            print("Unable to take picture")
+
+
 # Imgur
 image_link = ""
 IMGUR_CLIENT_ID = ""
@@ -165,12 +181,8 @@ while True:
         if serial_data["light"] != "0.00Lux":
             # Capture sequence
             if capture_done is not True:
-                for i in range(20):
-                    img_title = str(i) + ".jpg"
-                    # Capture image
-                    camera.capture(img_title)
-                    print(">>>> image %d captured" % i)
-
+                for img_nb in range(1, 21):
+                    take_picture(img_nb)
                     sleep(0.5)
                 capture_done = True
 
