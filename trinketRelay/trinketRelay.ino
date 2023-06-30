@@ -8,14 +8,16 @@
 */
 #include <LowPower.h>
 
-#define awakeTime 5
-#define sleepTime 55
+#define awakeTime 10
+#define sleepTime 50
 
-void setup() {
+void setup()
+{
   pinMode(4, OUTPUT);
 }
 
-void loop() {
+void loop()
+{
   digitalWrite(4, LOW);
   sleep(awakeTime);
 
@@ -23,9 +25,12 @@ void loop() {
   sleep(sleepTime);
 }
 
-void sleep(int minutes) {
-  for (int minute = 0; minute < minutes; minute ++) {
-    for (int seconde = 0; seconde < 60; seconde += 8) {
+void sleep(int minutes)
+{
+  for (int minute = 0; minute < minutes; minute++)
+  {
+    for (int seconde = 0; seconde < 60; seconde += 8)
+    {
       LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
     }
   }
