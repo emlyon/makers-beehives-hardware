@@ -1,4 +1,3 @@
-
 // Temperature & Humidity DHT11 sensor:
 //- libraries: https://github.com/adafruit/Adafruit_Sensor & https://github.com/adafruit/DHT-sensor-library
 //- code: http://wiki.seeedstudio.com/Grove-TemperatureAndHumidity_Sensor/ & https://www.instructables.com/id/Arduino-DHT11-Sensor/
@@ -16,10 +15,14 @@
 
 // Format data:https://docs.google.com/spreadsheets/d/1cJRaDxrSRpd754ncW69N8Kk84PlfYFvD9PlvOZIjPls/edit#gid=0
 
+// Weight Sensor
+// https://github.com/bogde/HX711
+
 #include "DHT.h"
 #include "Wire.h"
 #include "Digital_Light_TSL2561.h"
 #include "MutichannelGasSensor.h"
+#include "HX711.h"
 
 #define DHTPIN 2
 #define DHTTYPE DHT11
@@ -27,46 +30,58 @@ DHT dht(DHTPIN, DHTTYPE);
 
 const int sound = A0;
 
-// Data JSON structure
-static const char *KEYS[9] = {
-    "{\"temp\":\"",
-    "\",\"hum\":\"",
-    "\",\"light\":\"",
-    "\",\"bat\":\"",
-    "\",\"panel\":\"",
-    "\",\"co\":\"",
-    "\",\"no2\":\"",
-    "\",\"noise\":\"",
-    "\"}"};
+// HX711 circuit wiring
+const int LOADCELL_DOUT_PIN = 3;
+const int LOADCELL_SCK_PIN = 4;
+HX711 scale;
 
-static const char *UNITS[8] = {
+// Data JSON structure
+static const char *KEYS[10] = {
+    "{\"temperature\":",
+    ",\"humidity\":",
+    ",\"light\":",
+    ",\"co\":",
+    ",\"no2\":",
+    ",\"noise\":",
+    ",\"weight\":",
+    "}"};
+
+static const char *UNITS[10] = {
     "C",
     "%",
     "Lux",
-    "%",
-    "mV",
     "ppm",
     "ppm",
-    "dB"};
+    "dB",
+    "Kg"};
+
+float calibration_factor = -5000; // in kg
 
 void setup()
 {
+    // General init
     Serial.begin(115200);
+    Wire.begin();
 
     // Temperature & Humidity
     dht.begin();
 
     // Light
-    Wire.begin();
     TSL2561.init();
 
     // Air quality
     gas.begin(0x04); // the default I2C address of the slave is 0x04
     gas.powerOn();
+
+    // Scale
+    scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+    scale.set_scale(-23436.0f); // This parameter needs to be adjusted for your weight sensors. Look at the library documentation to find how to calculate it.
+                                // scale.tare(); //no tare absolute weight used
 }
 
 void loop()
 {
+
     float temp = dht.readTemperature();     // temperature
     float hum = dht.readHumidity();         // humidity
     float light = TSL2561.readVisibleLux(); // light
@@ -74,8 +89,8 @@ void loop()
     unsigned int panel = 0;                 // solar panel
     float co = gas.measure_CO();            // carbon monxide
     float no2 = gas.measure_NO2();          // nitrogen dioxide
-    float dec = 0;
     long noise = 0;
+    float weight = scale.get_units(5);
 
     for (int i = 0; i < 32; i++)
     {
@@ -83,46 +98,101 @@ void loop()
     }
     noise >>= 5;
 
-    for (int i = 0; i < 8; i++)
+    while (Serial.available() <= 0)
     {
-        Serial.print(KEYS[i]);
-        switch (i)
-        {
-        case 0: // Temperature
-            dec = 1;
-            Serial.print(temp);
-            break;
-        case 1: // Humidity
-            dec = 1;
-            Serial.print(hum);
-            break;
-        case 2: // Light
-            dec = 10;
-            Serial.print(light);
-            break;
-        case 3: // Battery
-            dec = 10;
-            Serial.print(bat);
-            break;
-        case 4: // Solar Panel
-            dec = 1;
-            Serial.print(panel);
-            break;
-        case 5: // Carbon Monxide
-            dec = 1000;
-            Serial.print(co);
-            break;
-        case 6: // Nitrogen Dioxide
-            dec = 1000;
-            Serial.print(no2);
-            break;
-        case 7: // Noise
-            dec = 1;
-            Serial.print(noise);
-            break;
-        }
-        Serial.print(UNITS[i]);
+        delay(100);
     }
-    Serial.println(KEYS[8]);
+
+    String sCALIB = "CALIB\n";
+    String sDATA = "DATA?\n";
+
+    String incomingString = Serial.readString();
+    // Serial.println(incomingString);
+    //   ser.write(unicode("DATA?\n")) in pyton script file
+    if (incomingString == sDATA)
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            Serial.print(KEYS[i]);
+            switch (i)
+            {
+            case 0: // Temperature
+                Serial.print("\"" + String(temp));
+                break;
+            case 1: // Humidity
+                Serial.print("\"" + String(hum));
+                break;
+            case 2: // Light
+                Serial.print("\"" + String(light));
+                break;
+            case 3: // Carbon Monxide
+                Serial.print("\"" + String(co));
+                break;
+            case 4: // Nitrogen Dioxide
+                Serial.print("\"" + String(no2));
+                break;
+            case 5: // Noise
+                Serial.print("\"" + String(noise));
+                break;
+            case 6: // Weight
+                Serial.print("\"" + String(weight));
+                break;
+            default:
+                break;
+            }
+            Serial.print(String(UNITS[i]) + "\"");
+        }
+        Serial.println(KEYS[7]);
+    }
+    else if (incomingString == sCALIB)
+    {
+
+        scale.set_scale();
+        scale.tare(); // Reset the scale to 0
+
+        long zero_factor = scale.read_average(); // Get a baseline reading
+        Serial.print("Zero factor: ");           // This can be used to remove the need to tare the scale. Useful in permanent scale projects.
+        Serial.println(zero_factor);
+
+        boolean exit_calibration_loop = false;
+        while (exit_calibration_loop == false)
+        {
+            scale.set_scale(calibration_factor); // Adjust to this calibration factor
+
+            Serial.print("Reading: ");
+            Serial.print(scale.get_units(10), 1);
+            // Serial.print(scale.read());
+            Serial.print(" kg"); // Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+            Serial.print(" calibration_factor: ");
+            Serial.print(calibration_factor);
+            Serial.println();
+
+            if (Serial.available())
+            {
+                char temp = Serial.read();
+                if (temp == '+' || temp == 'a')
+                    calibration_factor += 10;
+                else if (temp == '-' || temp == 'z')
+                    calibration_factor -= 10;
+                else if (temp == 'q')
+                    exit_calibration_loop = true;
+            }
+            delay(500);
+        }
+    }
+    else
+    {
+        Serial.println("Error, try again");
+    }
     delay(5000);
+}
+
+void valueOutput(value)
+{
+    return "\"" + value
+}
+
+void unitOutput(unit)
+{
+    return "\"" + unit
 }
