@@ -146,6 +146,22 @@ except:
 
 GIF_PATH = "capture.gif"
 
+
+def take_picture(img_nb, nb_retries=0):
+    img_title = str(img_nb) + ".jpg"
+    try:
+        camera.capture(img_title)
+        print(">>>> image %s captured" % img_title)
+    except picamera.PiCameraError as e:
+        print("Something went wrong with the camera")
+        log_error(e)
+        nb_retries += 1
+        if nb_retries < 3:
+            take_picture(img_title, nb_retries)
+        else:
+            print("Unable to take picture")
+
+
 # Imgur
 image_link = ""
 IMGUR_CLIENT_ID = ""
@@ -163,40 +179,42 @@ while True:
         timestamp = get_timestamp()
         print("[%s]" % timestamp)
         # Check if incoming data is parsable
+        print(">>>> checking incoming data")
         serial_data = read_serial_data()
 
         # Check light before taking pics (no night vision)
         if serial_data["light"] != "0.00Lux":
             # Capture sequence
             if capture_done is not True:
-                for i in range(20):
-                    img_title = str(i) + ".jpg"
-                    # Capture image
-                    camera.capture(img_title)
-                    print(">>>> image %d captured" % i)
-
+                print(">>>> capturing sequence")
+                for img_nb in range(1, 21):
+                    take_picture(img_nb)
                     sleep(0.5)
                 capture_done = True
+                print(">>>> sequence captured")
 
             # Convert sequence to gif
             if images_resized is not True:
+                print(">>>> resizing images")
                 call(["mogrify", "-resize", "800x600", "*.jpg"])
                 print(">>>> images resized")
                 images_resized = True
 
             # Create gif
             if gif_created is not True:
+                print(">>>> creating gif")
                 call(["convert", "-delay", "25", "-loop", "0", "*.jpg", GIF_PATH])
                 print(">>>> gif created")
                 gif_created = True
 
             # Upload image to imgur
             if gif_uploaded is not True:
+                print(">>>> uploading gif to imgur")
                 imgur = pyimgur.Imgur(IMGUR_CLIENT_ID)
                 image_title = "MakersBeehive " + str(BEEHIVE_ID) + " | " + timestamp
                 uploaded_image = imgur.upload_image(GIF_PATH, title=image_title)
                 image_link = uploaded_image.link
-                print(">>>> image uploaded at %s" % image_link)
+                print(">>>> gif uploaded at %s" % image_link)
                 gif_uploaded = True
 
         else:
