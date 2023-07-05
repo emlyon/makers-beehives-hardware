@@ -102,49 +102,37 @@ def read_serial_data():
 
 
 def check_internet_connection():
-    import subprocess  # For executing a shell command
-
     command = ["ping", "-c", "1", "google.com"]
-    return subprocess.call(command) == 0
+    return call(command) == 0
 
 
-while True:
-    if check_internet_connection() is True:
-        print(">>>> internet connection")
-        break
-    else:
-        print(">>>> no internet connection")
-        sleep(5)
+def remove_images():
+    print(">>>> removing images")
+    os.system("rm *.jpg *.gif")
 
 
-# Firebase init
-cred = credentials.Certificate(filepath("firebase-secrets.json"))
+def end_operation():
+    remove_images()
+    # Update code from distant repository
+    print(">>>> updating code")
+    # Ensure that the script is executed from the repository's directory
+    repository_path = filepath("")
+    os.system(f"cd {repository_path} && git pull")
+    print(">>>> code updated")
+    sys.exit("Exiting after end of cycle...")
 
-firebase_admin.initialize_app(
-    cred,
-    {
-        "databaseURL": "https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/"
-    },
-)
 
-# Init Serial
-try:
-    ser = serial.Serial("/dev/ttyACM0", 115200)
-except:
+def init_serial_communication():
+    # Init Serial
     try:
-        ser = serial.Serial("/dev/ttyACM1", 115200)
+        ser = serial.Serial("/dev/ttyACM0", 115200)
     except:
-        print("Unable to comunicate with arduino on Serial port")
-        sys.exit("Exiting after error...")
-
-# PiCamera
-try:
-    camera = picamera.PiCamera()
-except:
-    print("Unable to start camera")
-    sys.exit("Exiting after error...")
-
-GIF_PATH = "capture.gif"
+        try:
+            ser = serial.Serial("/dev/ttyACM1", 115200)
+        except:
+            print("Unable to comunicate with arduino on Serial port")
+            sys.exit("Exiting after error...")
+    return ser
 
 
 def take_picture(img_nb, nb_retries=0):
@@ -161,6 +149,35 @@ def take_picture(img_nb, nb_retries=0):
         else:
             print("Unable to take picture")
 
+
+while True:
+    if check_internet_connection() is True:
+        print(">>>> internet connection")
+        break
+    else:
+        print(">>>> no internet connection")
+        sleep(5)
+
+# Firebase init
+cred = credentials.Certificate(filepath("firebase-secrets.json"))
+
+firebase_admin.initialize_app(
+    cred,
+    {
+        "databaseURL": "https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/"
+    },
+)
+
+ser = init_serial_communication()
+
+# PiCamera
+try:
+    camera = picamera.PiCamera()
+except:
+    print("Unable to start camera")
+    sys.exit("Exiting after error...")
+
+GIF_PATH = "capture.gif"
 
 # Imgur
 image_link = ""
@@ -228,16 +245,13 @@ while True:
         }
         upload_data(beehive_data)
 
-        repository_path = filepath("")
-        os.system(f"cd {repository_path} && git pull")
-        sleep(10)
-
-        sys.exit("Exiting after end of cycle...")
+        end_operation()
 
     except Exception as e:
         print(">>>> SOMETHING WENT WRONG")
         print(str(e))
         log_error(e)
+        remove_images()
 
         # Shutdown if error is not due to incomplete JSON parsing
         if e.__class__ != ValueError:
