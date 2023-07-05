@@ -106,12 +106,13 @@ def check_internet_connection():
     return call(command) == 0
 
 
-def end_operation():
-    # Remove images
+def remove_images():
     print(">>>> removing images")
-    print(">>>> from %s" % os.getcwd())
     os.system("rm *.jpg *.gif")
 
+
+def end_operation():
+    remove_images()
     # Update code from distant repository
     print(">>>> updating code")
     # Ensure that the script is executed from the repository's directory
@@ -250,6 +251,7 @@ while True:
         print(">>>> SOMETHING WENT WRONG")
         print(str(e))
         log_error(e)
+        remove_images()
 
         # Shutdown if error is not due to incomplete JSON parsing
         if e.__class__ != ValueError:
