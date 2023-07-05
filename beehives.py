@@ -113,31 +113,10 @@ def end_operation():
     call(command)
 
     # Update code from distant repository
-    repository_path = filepath("")
     print(">>>> updating code")
-    os.system(f"cd {repository_path} && git pull")
+    os.system("git pull")
     print(">>>> code updated")
     sys.exit("Exiting after end of cycle...")
-
-
-while True:
-    if check_internet_connection() is True:
-        print(">>>> internet connection")
-        break
-    else:
-        print(">>>> no internet connection")
-        sleep(5)
-
-
-# Firebase init
-cred = credentials.Certificate(filepath("firebase-secrets.json"))
-
-firebase_admin.initialize_app(
-    cred,
-    {
-        "databaseURL": "https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/"
-    },
-)
 
 
 def init_serial_communication():
@@ -153,20 +132,8 @@ def init_serial_communication():
     return ser
 
 
-ser = init_serial_communication()
-
-# PiCamera
-try:
-    camera = picamera.PiCamera()
-except:
-    print("Unable to start camera")
-    sys.exit("Exiting after error...")
-
-GIF_PATH = "~/capture.gif"
-
-
 def take_picture(img_nb, nb_retries=0):
-    img_title = "~/" + str(img_nb) + ".jpg"
+    img_title = str(img_nb) + ".jpg"
     try:
         camera.capture(img_title)
         print(">>>> image %s captured" % img_title)
@@ -179,6 +146,39 @@ def take_picture(img_nb, nb_retries=0):
         else:
             print("Unable to take picture")
 
+
+while True:
+    if check_internet_connection() is True:
+        print(">>>> internet connection")
+        break
+    else:
+        print(">>>> no internet connection")
+        sleep(5)
+
+# Ensure that the script is executed from the repository's directory
+repository_path = filepath("")
+os.system(f"cd {repository_path}")
+
+# Firebase init
+cred = credentials.Certificate(filepath("firebase-secrets.json"))
+
+firebase_admin.initialize_app(
+    cred,
+    {
+        "databaseURL": "https://makerslab-beehives-default-rtdb.europe-west1.firebasedatabase.app/"
+    },
+)
+
+ser = init_serial_communication()
+
+# PiCamera
+try:
+    camera = picamera.PiCamera()
+except:
+    print("Unable to start camera")
+    sys.exit("Exiting after error...")
+
+GIF_PATH = "capture.gif"
 
 # Imgur
 image_link = ""
