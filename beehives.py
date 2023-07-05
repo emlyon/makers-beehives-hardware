@@ -107,12 +107,16 @@ def check_internet_connection():
 
 
 def end_operation():
-    # Update code from distant repository
-    repository_path = filepath("")
-    os.system(f"cd {repository_path} && git pull")
     # Remove images
+    print(">>>> removing images")
     command = ["rm", "*.jpg", "*.gif"]
     call(command)
+
+    # Update code from distant repository
+    repository_path = filepath("")
+    print(">>>> updating code")
+    os.system(f"cd {repository_path} && git pull")
+    print(">>>> code updated")
     sys.exit("Exiting after end of cycle...")
 
 
@@ -158,11 +162,11 @@ except:
     print("Unable to start camera")
     sys.exit("Exiting after error...")
 
-GIF_PATH = "capture.gif"
+GIF_PATH = "~/capture.gif"
 
 
 def take_picture(img_nb, nb_retries=0):
-    img_title = filepath("") + str(img_nb) + ".jpg"
+    img_title = "~/" + str(img_nb) + ".jpg"
     try:
         camera.capture(img_title)
         print(">>>> image %s captured" % img_title)
