@@ -109,6 +109,7 @@ def check_internet_connection():
 def end_operation():
     # Remove images
     print(">>>> removing images")
+    print(">>>> from %s" % os.getcwd())
     os.system("rm *.jpg *.gif")
 
     # Update code from distant repository
