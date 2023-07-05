@@ -114,7 +114,9 @@ def end_operation():
 
     # Update code from distant repository
     print(">>>> updating code")
-    os.system("git pull")
+    # Ensure that the script is executed from the repository's directory
+    repository_path = filepath("")
+    os.system(f"cd {repository_path} && git pull")
     print(">>>> code updated")
     sys.exit("Exiting after end of cycle...")
 
@@ -154,10 +156,6 @@ while True:
     else:
         print(">>>> no internet connection")
         sleep(5)
-
-# Ensure that the script is executed from the repository's directory
-repository_path = filepath("")
-os.system(f"cd {repository_path}")
 
 # Firebase init
 cred = credentials.Certificate(filepath("firebase-secrets.json"))
