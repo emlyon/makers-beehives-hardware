@@ -102,10 +102,18 @@ def read_serial_data():
 
 
 def check_internet_connection():
-    import subprocess  # For executing a shell command
-
     command = ["ping", "-c", "1", "google.com"]
-    return subprocess.call(command) == 0
+    return call(command) == 0
+
+
+def end_operation():
+    # Update code from distant repository
+    repository_path = filepath("")
+    os.system(f"cd {repository_path} && git pull")
+    # Remove images
+    command = ["rm", "*.jpg", "*.gif"]
+    call(command)
+    sys.exit("Exiting after end of cycle...")
 
 
 while True:
@@ -127,15 +135,21 @@ firebase_admin.initialize_app(
     },
 )
 
-# Init Serial
-try:
-    ser = serial.Serial("/dev/ttyACM0", 115200)
-except:
+
+def init_serial_communication():
+    # Init Serial
     try:
-        ser = serial.Serial("/dev/ttyACM1", 115200)
+        ser = serial.Serial("/dev/ttyACM0", 115200)
     except:
-        print("Unable to comunicate with arduino on Serial port")
-        sys.exit("Exiting after error...")
+        try:
+            ser = serial.Serial("/dev/ttyACM1", 115200)
+        except:
+            print("Unable to comunicate with arduino on Serial port")
+            sys.exit("Exiting after error...")
+    return ser
+
+
+ser = init_serial_communication()
 
 # PiCamera
 try:
@@ -148,7 +162,7 @@ GIF_PATH = "capture.gif"
 
 
 def take_picture(img_nb, nb_retries=0):
-    img_title = str(img_nb) + ".jpg"
+    img_title = filepath("") + str(img_nb) + ".jpg"
     try:
         camera.capture(img_title)
         print(">>>> image %s captured" % img_title)
@@ -228,11 +242,7 @@ while True:
         }
         upload_data(beehive_data)
 
-        repository_path = filepath("")
-        os.system(f"cd {repository_path} && git pull")
-        sleep(10)
-
-        sys.exit("Exiting after end of cycle...")
+        end_operation()
 
     except Exception as e:
         print(">>>> SOMETHING WENT WRONG")
