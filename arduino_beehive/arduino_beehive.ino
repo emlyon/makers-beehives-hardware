@@ -186,13 +186,3 @@ void loop()
     }
     delay(5000);
 }
-
-void valueOutput(value)
-{
-    return "\"" + value
-}
-
-void unitOutput(unit)
-{
-    return "\"" + unit
-}
