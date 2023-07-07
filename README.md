@@ -193,6 +193,12 @@ Type ```sudo raspi-config``` and enable RaspiCam: `Interfacing Options` -> `Came
 
 Create secret keys files within the repository:
 
+To move within the repository, type 
+
+```
+cd makers-beehives-hardware
+```
+
 1. `firebase-secrets.json`
 
 ```
