@@ -193,7 +193,7 @@ Type ```sudo raspi-config``` and enable RaspiCam: `Interfacing Options` -> `Came
 
 Create secret keys files within the repository:
 
-To move within the repository, type 
+To move within the repository, type
 
 ```
 cd makers-beehives-hardware
@@ -239,6 +239,9 @@ Add this line at the bottom of the file :
 ```python makers-beehives-hardware/beehives.py```
 
 ### References
+
+**Legacy references :**
+
 - [Raspberry Pi / Python: install pip for Python modules dependencies installation](http://makio135.tumblr.com/post/84826991967/raspberry-pi-python-install-pip-for-python)
 - [How to mount a USB flash drive on Raspberry Pi](http://raspi.tv/2012/mount-a-usb-flash-drive-on-raspberry-pi)
 - [How to setup multiple WiFi networks?](http://raspberrypi.stackexchange.com/questions/11631/how-to-setup-multiple-wifi-networks#11738)
@@ -252,7 +255,7 @@ Add this line at the bottom of the file :
 ## Arduino config
 
 ### Load sensors
-![](https://cdn.instructables.com/F36/2JAR/J822Y1NX/F362JARJ822Y1NX.LARGE.jpg)
+![](https://content.instructables.com/FYY/8LCO/J7QGHZGZ/FYY8LCOJ7QGHZGZ.png)
 Based on https://www.instructables.com/id/Arduino-Bathroom-Scale-With-50-Kg-Load-Cells-and-H/
 
 ### Seed Studio Base Shield wiring
