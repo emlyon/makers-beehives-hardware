@@ -13,12 +13,13 @@ The [data visualisation on the website is dealt with on another repository](http
 
 [3. Raspberry Pi setup](https://github.com/emlyon/makers-beehives-hardware#raspberry-pi-setup)
 
-[4. Arduino Uno setup](https://github.com/emlyon/makers-beehives-hardware#arduino-setup)
+[4. Arduino Trinket setup](https://github.com/emlyon/makers-beehives-hardware#arduino-trinket)
 
-[5. Arduino Trinket setup]
+[5. Arduino Uno setup](https://github.com/emlyon/makers-beehives-hardware#arduino-setup)
 
 ## 1. Global setup
 ![](assets/beehive-diagram.png)
+
 [Edition du diagramme (drive makers lab)](https://drive.google.com/drive/folders/1L2eGuwuu4EVNqN6som_GeDfP7-7ZTObA)
 
 
@@ -296,7 +297,7 @@ Add this line at the bottom of the file :
 
 
 
-## 4. Arduino Uno setup
+## 5. Arduino Uno setup
 
 1. Open Arduino IDE
 2. Install Adafruit's board manager (if not already installed) : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
@@ -352,7 +353,7 @@ Based on https://www.instructables.com/id/Arduino-Bathroom-Scale-With-50-Kg-Load
 	- library: https://github.com/Seeed-Studio/Mutichannel_Gas_Sensor/archive/master.zip
 	- code: http://wiki.seeedstudio.com/Grove-Multichannel_Gas_Sensor/
 
-## 5. Arduino Trinket setup
+## 4. Arduino Trinket setup
 
 The Arduino Trinket will control a relay, in order to power the system on for 10 minutes once an hour.
 
