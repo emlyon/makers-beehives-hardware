@@ -1,14 +1,55 @@
 # makers' beehives - hardware
+This beehive project is dedicated to remotely monitoring a beehive's activity :
 
+Several sensors collect data. This data is then sent through WiFi to a database, and made accessible on a website.
+
+In this repository, we will focus on collecting and sending the data.
+
+The [data visualisation on the website is dealt with on another repository](https://github.com/emlyon/makers-beehives-website/)
+## Summary :
+[1. Global setup](https://github.com/emlyon/makers-beehives-hardware#global-setup)
+
+[2. Power supply](https://github.com/emlyon/makers-beehives-hardware#power-supply)
+
+[3. Raspberry Pi config](https://github.com/emlyon/makers-beehives-hardware#raspberry-pi-config)
+
+[4. Arduino config](https://github.com/emlyon/makers-beehives-hardware#arduino-config)
+
+## 1. Global setup
 ![](beehive-diagram.png)
 
 
-## Alimentation
+This system is designed to run periodic measurement cycles and send the results online.
+
+For each cycle, we will:
+- produce and upload a gif from pictures from the beehive's entrance
+- read several parameters about the beehive's environment and conditions :
+	- Temperature
+	- Humidity
+	- Noise
+	- Weight
+	- Light
+	- CO
+	- NO2
+
+All of this data will then be stored on a online database.
+
+For this project, we use :
+- a solar panel and a powerbank for power supply.
+- an Arduino Trinket, which will trigger and power on the system for 10 minutes, once an hour.
+- an Arduino Uno and a series of sensors. The Arduino Uno will read data from its sensors and send them when requested through a serial port.
+- a Raspberry Pi which will read data from the Arduino Uno, take pictures from a camera, transform them into a gif, and then upload all the data online.
+
+
+## 2. Power supply
+
+To power the system, we use a solar panel and a powerbank.
+
 - [ECO-WORTHY 25W 12V Polycrystalline Solar Panel Module Charging RV Boat](https://www.eco-worthy.com/catalog/worthy-polycrystalline-solar-panel-module-charging-boat-p-455.html)
 - [UBEC DC/DC Step-Down (Buck) Converter - 5V @ 3A output](https://www.adafruit.com/product/1385)
 - [Tecknet 33000mAh powerbank](http://www.tecknet.co.uk/bluetek.html)
 
-## Raspberry Pi config
+## 3. Raspberry Pi config
 
 ### Install Raspbian OS
 1. Connect the SD card to your computer
@@ -196,13 +237,12 @@ Create secret keys files within the repository:
 To move within the repository, type
 
 ```
-cd makers-beehives-hardware
+cd makers-beehives-hardware/
 ```
 
 1. `firebase-secrets.json`
 
 ```
-cd makers-beehives-hardware/
 touch firebase-secrets.json
 nano firebase-secrets.json
 ```
@@ -252,7 +292,15 @@ Add this line at the bottom of the file :
 - [Execute sudo without Password](http://askubuntu.com/questions/147241/execute-sudo-without-password#147265)
 
 
-## Arduino config
+## 4. Arduino config
+
+Use Arduino IDE
+Download the sensors custom libraries :
+https://github.com/makerslabemlyon/Grove_Digital_Light_Sensor
+https://github.com/makerslabemlyon/Grove_Temperature_And_Humidity_Sensor
+https://github.com/makerslabemlyon/HX711
+https://github.com/emlyon/Mutichannel_Gas_Sensor
+
 
 ### Load sensors
 ![](https://content.instructables.com/FYY/8LCO/J7QGHZGZ/FYY8LCOJ7QGHZGZ.png)
