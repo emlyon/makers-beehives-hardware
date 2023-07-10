@@ -16,7 +16,8 @@ The [data visualisation on the website is dealt with on another repository](http
 [4. Arduino config](https://github.com/emlyon/makers-beehives-hardware#arduino-config)
 
 ## 1. Global setup
-![](beehive-diagram.png)
+![](assets/beehive-diagram.png)
+[Edition du diagramme (drive makers lab)](https://drive.google.com/drive/folders/1L2eGuwuu4EVNqN6som_GeDfP7-7ZTObA)
 
 
 This system is designed to run periodic measurement cycles and send the results online.
@@ -294,13 +295,42 @@ Add this line at the bottom of the file :
 
 ## 4. Arduino config
 
-Use Arduino IDE
-Download the sensors custom libraries :
-https://github.com/makerslabemlyon/Grove_Digital_Light_Sensor
-https://github.com/makerslabemlyon/Grove_Temperature_And_Humidity_Sensor
-https://github.com/makerslabemlyon/HX711
-https://github.com/emlyon/Mutichannel_Gas_Sensor
+### Arduino Uno
 
+1. Open Arduino IDE
+2. Install Adafruit's board manager : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
+3. Plug in the Arduino Uno board
+4. Paste the [code from arduino_beehive.ino](https://github.com/emlyon/makers-beehives-hardware/blob/master/arduino_beehive/arduino_beehive.ino) into the IDE window
+5. Install required libraries from the library interface :
+	- [Dictionary](https://www.arduino.cc/reference/en/libraries/dictionary/)
+6. Download and install the sensors' custom libraries
+
+	For the project's needs, we had to customize some existing libraries :
+	- [Multichannel Gas Sensor](https://github.com/emlyon/Mutichannel_Gas_Sensor)
+	- [Grove_Digital_Light_Sensor](https://github.com/makerslabemlyon/Grove_Digital_Light_Sensor)
+	- [Grove_Temperature_And_Humidity_Sensor](https://github.com/makerslabemlyon/Grove_Temperature_And_Humidity_Sensor)
+	- [HX711](https://github.com/makerslabemlyon/HX711)
+
+	For each of the following :
+	1. access to the github repository
+	2. click on *Code*, and *Downlod ZIP*
+		![](assets/git-clone-zip.png)
+	3. Install the library into Arduino IDE:
+
+		Click on *Sketch* > *Include library* > *Add .ZIP library*, then choose the downloaded .ZIP library.
+	4. Upload the code to the Arduino Uno board.
+
+		If you access the serial monitor, you should see some information about the sensors, which will depend on whether the sensors are plugged or not.
+
+
+Now, you can wire up the sensors on your board, following our documentation on Notion:
+- [Plug the sensors](https://www.notion.so/makerslabemlyon/Documentation-Ruches-2023-87b9968f1ae540bebe24491d58c0829e?pvs=4#df472eb7cfa948afa646c095382271f2)
+- [Plug the load sensor](https://www.notion.so/makerslabemlyon/Documentation-Ruches-2023-87b9968f1ae540bebe24491d58c0829e?pvs=4#83c36c557b3c4b8399e7c495dc986f85)
+
+
+Then, you should be able to fetch data from the sensors :
+
+From the serial monitor, you can request data from the sensors by sending the following serial message : `DATA?`
 
 ### Load sensors
 ![](https://content.instructables.com/FYY/8LCO/J7QGHZGZ/FYY8LCOJ7QGHZGZ.png)
