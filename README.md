@@ -11,9 +11,11 @@ The [data visualisation on the website is dealt with on another repository](http
 
 [2. Power supply](https://github.com/emlyon/makers-beehives-hardware#power-supply)
 
-[3. Raspberry Pi config](https://github.com/emlyon/makers-beehives-hardware#raspberry-pi-config)
+[3. Raspberry Pi setup](https://github.com/emlyon/makers-beehives-hardware#raspberry-pi-setup)
 
-[4. Arduino config](https://github.com/emlyon/makers-beehives-hardware#arduino-config)
+[4. Arduino Uno setup](https://github.com/emlyon/makers-beehives-hardware#arduino-setup)
+
+[5. Arduino Trinket setup]
 
 ## 1. Global setup
 ![](assets/beehive-diagram.png)
@@ -50,7 +52,7 @@ To power the system, we use a solar panel and a powerbank.
 - [UBEC DC/DC Step-Down (Buck) Converter - 5V @ 3A output](https://www.adafruit.com/product/1385)
 - [Tecknet 33000mAh powerbank](http://www.tecknet.co.uk/bluetek.html)
 
-## 3. Raspberry Pi config
+## 3. Raspberry Pi setup
 
 ### Install Raspbian OS
 1. Connect the SD card to your computer
@@ -293,12 +295,11 @@ Add this line at the bottom of the file :
 - [Execute sudo without Password](http://askubuntu.com/questions/147241/execute-sudo-without-password#147265)
 
 
-## 4. Arduino config
 
-### Arduino Uno
+## 4. Arduino Uno setup
 
 1. Open Arduino IDE
-2. Install Adafruit's board manager : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
+2. Install Adafruit's board manager (if not already installed) : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
 3. Plug in the Arduino Uno board
 4. Paste the [code from arduino_beehive.ino](https://github.com/emlyon/makers-beehives-hardware/blob/master/arduino_beehive/arduino_beehive.ino) into the IDE window
 5. Install required libraries from the library interface :
@@ -350,3 +351,19 @@ Based on https://www.instructables.com/id/Arduino-Bathroom-Scale-With-50-Kg-Load
 - [Multichannel Gas Sensor](https://www.seeedstudio.com/Grove-Multichannel-Gas-Sensor-p-2502.html) on I2C
 	- library: https://github.com/Seeed-Studio/Mutichannel_Gas_Sensor/archive/master.zip
 	- code: http://wiki.seeedstudio.com/Grove-Multichannel_Gas_Sensor/
+
+## 5. Arduino Trinket setup
+
+The Arduino Trinket will control a relay, in order to power the system on for 10 minutes once an hour.
+
+We will follow [this documentation](https://learn.adafruit.com/introducing-pro-trinket/setting-up-arduino-ide) to set up the trinket
+
+1. Open Arduino IDE
+2. Install Adafruit's board manager (if not already installed) : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
+3. Select the Pro Trinket 5V/16MHz (USB) board :
+
+	*Tools* > *Board* > *Adafruit AVR Boards* > *Pro Trinket 5V/16MHz*
+4. Next select the USBtinyISP programmer : *Tools* > *Programmer* > *USBtinyISP*
+5. Paste the code from [trinketRelay.ino file](https://github.com/emlyon/makers-beehives-hardware/blob/master/trinketRelay/trinketRelay.ino) into the IDE window
+6. Plug in the Arduino Trinket, make sure you see the green LED lit (power good) and the red LED pulsing. Press the button if the red LED is not pulsing, to get into bootloader mode.
+7. Upload the code to the board : *Sketch* > *Upload using programmer*
