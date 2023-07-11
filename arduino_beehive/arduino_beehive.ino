@@ -54,19 +54,21 @@ void setup()
     units = new Dictionary();
     error_device = new Dictionary();
 
-    units->insert("temperature", "C");
+    units->insert("temperature", "°C");
     units->insert("humidity", "%");
-    units->insert("light", "Lux");
+    units->insert("light", "lux");
     units->insert("co", "ppm");
     units->insert("no2", "ppm");
+    // The actual unit is not dB
+    // It is proportional to the sound intensity on a 1024 scale.
     units->insert("noise", "dB");
-    units->insert("weight", "Kg");
+    units->insert("weight", "kg");
 
     // Check if all devices are available and ready
 
-    // Soud sendor
+    // Sound sendor
     // nothing to do
-    Serial.println("Soud sensor is ready");
+    Serial.println("Sound sensor is ready");
 
     // Temperature & Humidity
     dht.begin();
