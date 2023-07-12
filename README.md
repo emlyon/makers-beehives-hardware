@@ -295,7 +295,21 @@ Add this line at the bottom of the file :
 - [Change default username](http://raspberrypi.stackexchange.com/questions/12827/change-default-username)
 - [Execute sudo without Password](http://askubuntu.com/questions/147241/execute-sudo-without-password#147265)
 
+## 4. Arduino Trinket setup
 
+The Arduino Trinket will control a relay, in order to power the system on for 10 minutes once an hour.
+
+We will follow [this documentation](https://learn.adafruit.com/introducing-pro-trinket/setting-up-arduino-ide) to set up the trinket
+
+1. Open Arduino IDE
+2. Install Adafruit's board manager (if not already installed) : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
+3. Select the Pro Trinket 5V/16MHz (USB) board :
+
+	*Tools* > *Board* > *Adafruit AVR Boards* > *Pro Trinket 5V/16MHz*
+4. Next select the USBtinyISP programmer : *Tools* > *Programmer* > *USBtinyISP*
+5. Paste the code from [trinketRelay.ino file](https://github.com/emlyon/makers-beehives-hardware/blob/master/trinketRelay/trinketRelay.ino) into the IDE window
+6. Plug in the Arduino Trinket, make sure you see the green LED lit (power good) and the red LED pulsing. Press the button if the red LED is not pulsing, to get into bootloader mode.
+7. Upload the code to the board : *Sketch* > *Upload using programmer*
 
 ## 5. Arduino Uno setup
 
@@ -305,6 +319,7 @@ Add this line at the bottom of the file :
 4. Paste the [code from arduino_beehive.ino](https://github.com/emlyon/makers-beehives-hardware/blob/master/arduino_beehive/arduino_beehive.ino) into the IDE window
 5. Install required libraries from the library interface :
 	- [Dictionary](https://www.arduino.cc/reference/en/libraries/dictionary/)
+
 6. Download and install the sensors' custom libraries
 
 	For the project's needs, we had to customize some existing libraries :
@@ -324,6 +339,8 @@ Add this line at the bottom of the file :
 
 		If you access the serial monitor, you should see some information about the sensors, which will depend on whether the sensors are plugged or not.
 
+7. Using the same process as custom libraries, install the following libraries if needed :
+	- [Low-Power](https://github.com/rocketscream/Low-Power)
 
 Now, you can wire up the sensors on your board, following our documentation on Notion:
 - [Plug the sensors](https://www.notion.so/makerslabemlyon/Documentation-Ruches-2023-87b9968f1ae540bebe24491d58c0829e?pvs=4#df472eb7cfa948afa646c095382271f2)
@@ -352,19 +369,3 @@ Based on https://www.instructables.com/id/Arduino-Bathroom-Scale-With-50-Kg-Load
 - [Multichannel Gas Sensor](https://www.seeedstudio.com/Grove-Multichannel-Gas-Sensor-p-2502.html) on I2C
 	- library: https://github.com/Seeed-Studio/Mutichannel_Gas_Sensor/archive/master.zip
 	- code: http://wiki.seeedstudio.com/Grove-Multichannel_Gas_Sensor/
-
-## 4. Arduino Trinket setup
-
-The Arduino Trinket will control a relay, in order to power the system on for 10 minutes once an hour.
-
-We will follow [this documentation](https://learn.adafruit.com/introducing-pro-trinket/setting-up-arduino-ide) to set up the trinket
-
-1. Open Arduino IDE
-2. Install Adafruit's board manager (if not already installed) : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
-3. Select the Pro Trinket 5V/16MHz (USB) board :
-
-	*Tools* > *Board* > *Adafruit AVR Boards* > *Pro Trinket 5V/16MHz*
-4. Next select the USBtinyISP programmer : *Tools* > *Programmer* > *USBtinyISP*
-5. Paste the code from [trinketRelay.ino file](https://github.com/emlyon/makers-beehives-hardware/blob/master/trinketRelay/trinketRelay.ino) into the IDE window
-6. Plug in the Arduino Trinket, make sure you see the green LED lit (power good) and the red LED pulsing. Press the button if the red LED is not pulsing, to get into bootloader mode.
-7. Upload the code to the board : *Sketch* > *Upload using programmer*
