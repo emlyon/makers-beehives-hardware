@@ -3,6 +3,7 @@
 import time
 import datetime
 import serial
+import serial.tools.list_ports
 import json
 import re
 import picamera
@@ -130,15 +131,29 @@ def end_operation():
 
 
 def init_serial_communication():
-    # Init Serial
+    available_ports = list(serial.tools.list_ports.comports())
+    ports_names = [port.name for port in available_ports]
+
+    # Try to connect to the Arduino on each port and return serial object if successful
+    for port_name in ports_names:
+        ser = connect_to_serial_port(port_name)
+        if ser:
+            break
+
+    # return serial object or log error and exit if no port is available
+    if not ser:
+        log_error("Unable to connect to Arduino on any port")
+    else:
+        print(f"Connected to Arduino on port {port_name}")
+        return ser
+
+
+def connect_to_serial_port(port_name):
+    print(f"Trying to connect to Arduino on port {port_name}")
     try:
-        ser = serial.Serial("/dev/ttyACM0", 115200)
+        ser = serial.Serial(port_name, 115200)
     except:
-        try:
-            ser = serial.Serial("/dev/ttyACM1", 115200)
-        except:
-            print("Unable to comunicate with arduino on Serial port")
-            sys.exit("Exiting after error...")
+        return False
     return ser
 
 
