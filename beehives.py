@@ -152,7 +152,8 @@ def connect_to_serial_port(port_name):
     print(f"Trying to connect to Arduino on port {port_name}")
     try:
         ser = serial.Serial(port_name, 115200)
-    except:
+    except serial.SerialException as e:
+        print(str(e))
         return False
     return ser
 
