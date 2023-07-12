@@ -111,15 +111,22 @@ def remove_images():
     os.system("rm *.jpg *.gif")
 
 
-def end_operation():
-    remove_images()
+def update_source_code():
     # Update code from distant repository
     print(">>>> updating code")
     # Ensure that the script is executed from the repository's directory
     repository_path = filepath("")
     os.system(f"cd {repository_path} && git pull")
     print(">>>> code updated")
-    sys.exit("Exiting after end of cycle...")
+
+
+def end_operation():
+    remove_images()
+    update_source_code()
+    print("Exiting after end of cycle...")
+    shutdown()
+    # While working on the code, it is more practical to exist instead of shutting down the Pi :
+    # sys.exit("Exiting after end of cycle...")
 
 
 def init_serial_communication():
