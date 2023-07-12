@@ -24,38 +24,25 @@
 #include "MutichannelGasSensor.h"
 #include "HX711.h"
 
+#include <Dictionary.h>
+#include <DictionaryDeclarations.h>
+
 #define DHTPIN 2
 #define DHTTYPE DHT11
-DHT dht(DHTPIN, DHTTYPE);
+#define SOUND_PIN A0
 
-const int sound = A0;
+DHT dht(DHTPIN, DHTTYPE);
 
 // HX711 circuit wiring
 const int LOADCELL_DOUT_PIN = 3;
 const int LOADCELL_SCK_PIN = 4;
 HX711 scale;
 
-// Data JSON structure
-static const char *KEYS[10] = {
-    "{\"temperature\":",
-    ",\"humidity\":",
-    ",\"light\":",
-    ",\"co\":",
-    ",\"no2\":",
-    ",\"noise\":",
-    ",\"weight\":",
-    "}"};
+Dictionary *data;
+Dictionary *units;
+Dictionary *error_device;
 
-static const char *UNITS[10] = {
-    "C",
-    "%",
-    "Lux",
-    "ppm",
-    "ppm",
-    "dB",
-    "Kg"};
-
-float calibration_factor = -5000; // in kg
+float calibration_factor = -22000.0; // in kg
 
 void setup()
 {
@@ -63,87 +50,178 @@ void setup()
     Serial.begin(115200);
     Wire.begin();
 
+    data = new Dictionary();
+    units = new Dictionary();
+    error_device = new Dictionary();
+
+    units->insert("temperature", "°C");
+    units->insert("humidity", "%");
+    units->insert("light", "lux");
+    units->insert("co", "ppm");
+    units->insert("no2", "ppm");
+    // The actual unit is not dB
+    // It is proportional to the sound intensity on a 1024 scale.
+    units->insert("noise", "dB");
+    units->insert("weight", "kg");
+
+    // Check if all devices are available and ready
+
+    // Sound sendor
+    // nothing to do
+    Serial.println("Sound sensor is ready");
+
     // Temperature & Humidity
     dht.begin();
+    if (dht.isReady() == false)
+        Serial.println("ERROR, DHT not found");
+    else
+        Serial.println("DHT is ready");
 
     // Light
     TSL2561.init();
+    if (TSL2561.isReady() == false)
+        Serial.println("ERROR, TSL2561 not found");
+    else
+        Serial.println("TSL2561 is ready");
 
     // Air quality
     gas.begin(0x04); // the default I2C address of the slave is 0x04
-    gas.powerOn();
+    if (gas.isReady() == false)
+        Serial.println("ERROR, gas sensor not found");
+    else
+    {
+        gas.powerOn();
+        Serial.println("Gas sensor is ready");
+    }
 
     // Scale
     scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
-    scale.set_scale(-23436.0f); // This parameter needs to be adjusted for your weight sensors. Look at the library documentation to find how to calculate it.
-                                // scale.tare(); //no tare absolute weight used
+    delay(50);
+    if (scale.wait_ready_retry(10, 50) == false)
+        Serial.println("ERROR, scale not found");
+    else
+        Serial.println("Scale is ready");
+
+    scale.set_scale(calibration_factor); // This parameter needs to be adjusted for your weight sensors. Look at the library documentation to find how to calculate it.
+                                         // scale.tare(); //no tare absolute weight used
+    Serial.println("Arduino setup is complete.");
 }
 
 void loop()
 {
 
-    float temp = dht.readTemperature();     // temperature
-    float hum = dht.readHumidity();         // humidity
-    float light = TSL2561.readVisibleLux(); // light
-    float bat = 100;                        // battery
-    unsigned int panel = 0;                 // solar panel
-    float co = gas.measure_CO();            // carbon monxide
-    float no2 = gas.measure_NO2();          // nitrogen dioxide
-    long noise = 0;
-    float weight = scale.get_units(5);
-
-    for (int i = 0; i < 32; i++)
-    {
-        noise += analogRead(sound);
-    }
-    noise >>= 5;
-
-    while (Serial.available() <= 0)
-    {
-        delay(100);
-    }
-
     String sCALIB = "CALIB\n";
     String sDATA = "DATA?\n";
 
+    // Wait for serial input
+    while (Serial.available() <= 0)
+        delay(10);
     String incomingString = Serial.readString();
-    // Serial.println(incomingString);
-    //   ser.write(unicode("DATA?\n")) in pyton script file
+
+    // Data request
     if (incomingString == sDATA)
     {
-        for (int i = 0; i < 7; i++)
+        float temp = 0.0;
+        float hum = 0.0;
+        float light = 0.0;
+        float co = 0.0;
+        float no2 = 0.0;
+        float weight = 0.0;
+        int noise = 0;
+
+        // If sensor is ready, add reading to the data dictionnary
+        // Else, add the sensor to the error_device dictionnary
+
+        if (dht.isReady())
         {
-            Serial.print(KEYS[i]);
-            switch (i)
-            {
-            case 0: // Temperature
-                Serial.print("\"" + String(temp));
-                break;
-            case 1: // Humidity
-                Serial.print("\"" + String(hum));
-                break;
-            case 2: // Light
-                Serial.print("\"" + String(light));
-                break;
-            case 3: // Carbon Monxide
-                Serial.print("\"" + String(co));
-                break;
-            case 4: // Nitrogen Dioxide
-                Serial.print("\"" + String(no2));
-                break;
-            case 5: // Noise
-                Serial.print("\"" + String(noise));
-                break;
-            case 6: // Weight
-                Serial.print("\"" + String(weight));
-                break;
-            default:
-                break;
-            }
-            Serial.print(String(UNITS[i]) + "\"");
+            temp = dht.readTemperature(); // temperature
+            hum = dht.readHumidity();     // humidity
+            data->insert("temperature", String(temp, 1));
+            data->insert("humidity", String(hum, 2));
         }
-        Serial.println(KEYS[7]);
+        else
+        {
+            error_device->insert("temperature", "true");
+            error_device->insert("humidity", "true");
+        }
+
+        if (TSL2561.isReady())
+        {
+            light = TSL2561.readVisibleLux(); // light
+            data->insert("light", String(light, 0));
+        }
+        else
+        {
+            error_device->insert("light", "true");
+        }
+
+        if (gas.isReady())
+        {
+            co = gas.measure_CO();   // carbon monxide
+            no2 = gas.measure_NO2(); // nitrogen dioxide
+            data->insert("co", String(co, 3));
+            data->insert("no2", String(no2, 3));
+        }
+        else
+        {
+            error_device->insert("co", "true");
+            error_device->insert("no2", "true");
+        }
+
+        if (scale.wait_ready_retry(10, 50) != false)
+        {
+            weight = scale.get_units(5);
+            data->insert("weight", String(weight, 1));
+        }
+        else
+        {
+            error_device->insert("weight", "true");
+        }
+
+        for (int i = 0; i < 32; i++)
+        {
+            noise += analogRead(SOUND_PIN);
+        }
+        noise >>= 5;
+        data->insert("noise", String(noise));
+
+        // Print data in JSON format
+        // Open JSON
+        Serial.print("{");
+        int nbData = data->count();
+        int nbError = error_device->count();
+
+        // Add an error key if there is at least one error
+        if (nbError > 0)
+        {
+            Serial.print("\"error\" : \"");
+            for (int i = 0; i < nbError; i++)
+            {
+                // Device errors are separated by a comma
+                Serial.print(error_device->key(i));
+                if (i + 1 < nbError)
+                    Serial.print(",");
+            }
+            Serial.print("\",");
+        }
+
+        for (int i = 0; i < nbData; i++)
+        {
+            // For each data, print the key, the value and the unit
+            Serial.print("\"");
+            Serial.print(data->key(i));
+            Serial.print("\" : \"");
+            Serial.print(data->search(data->key(i)));
+            Serial.print(units->search(data->key(i)));
+
+            Serial.print("\"");
+            if (i + 1 < nbData)
+                Serial.print(",");
+        }
+        // Close JSON
+        Serial.println("}");
     }
+    // Calibration request
     else if (incomingString == sCALIB)
     {
 
@@ -172,10 +250,14 @@ void loop()
                 char temp = Serial.read();
                 if (temp == '+' || temp == 'a')
                     calibration_factor += 10;
+                else if (temp == 'p')
+                    calibration_factor += 250;
                 else if (temp == '-' || temp == 'z')
                     calibration_factor -= 10;
                 else if (temp == 'q')
                     exit_calibration_loop = true;
+                else if (temp == 'm')
+                    calibration_factor -= 250;
             }
             delay(500);
         }
@@ -183,6 +265,8 @@ void loop()
     else
     {
         Serial.println("Error, try again");
+        Serial.println(incomingString);
     }
-    delay(5000);
+
+    delay(10);
 }

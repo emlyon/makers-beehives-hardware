@@ -3,6 +3,7 @@
 import time
 import datetime
 import serial
+import serial.tools.list_ports
 import json
 import re
 import picamera
@@ -111,28 +112,63 @@ def remove_images():
     os.system("rm *.jpg *.gif")
 
 
-def end_operation():
-    remove_images()
+def update_source_code():
     # Update code from distant repository
     print(">>>> updating code")
     # Ensure that the script is executed from the repository's directory
     repository_path = filepath("")
     os.system(f"cd {repository_path} && git pull")
     print(">>>> code updated")
-    sys.exit("Exiting after end of cycle...")
+
+
+def end_operation():
+    remove_images()
+    update_source_code()
+    print("Exiting after end of cycle...")
+    shutdown()
+    # While working on the code, it is more practical to exist instead of shutting down the Pi :
+    # sys.exit("Exiting after end of cycle...")
 
 
 def init_serial_communication():
-    # Init Serial
+    available_ports = list(serial.tools.list_ports.comports())
+    ports_names = [port.name for port in available_ports]
+
+    # Try to connect to the Arduino on each port and return serial object if successful
+    for port_name in ports_names:
+        ser = connect_to_serial_port(port_name)
+        if ser:
+            break
+
+    # return serial object or log error and exit if no port is available
+    if not ser:
+        log_error("Unable to connect to Arduino on any port")
+    else:
+        print(f"Connected to Arduino on port {port_name}")
+        return ser
+
+
+def connect_to_serial_port(port_name):
+    print(f"Trying to connect to Arduino on port {port_name}")
+    port_path = "/dev/" + port_name
     try:
-        ser = serial.Serial("/dev/ttyACM0", 115200)
-    except:
-        try:
-            ser = serial.Serial("/dev/ttyACM1", 115200)
-        except:
-            print("Unable to comunicate with arduino on Serial port")
-            sys.exit("Exiting after error...")
+        ser = serial.Serial(port_path, 115200)
+    except serial.SerialException as e:
+        print(str(e))
+        return False
     return ser
+
+
+def wait_for_arduino_setup():
+    ser.flush()
+    serial_string = ser.readline()
+    print(f">>>> reading serial_string: {serial_string}")
+    while not re.search("Arduino setup is complete.", str(serial_string)):
+        ser.flush()
+        print(f">>>> reading serial_string: {serial_string}")
+        time.sleep(0.1)
+        serial_string = ser.readline()
+    print("serial communication is ready")
 
 
 def take_picture(img_nb, nb_retries=0):
@@ -169,6 +205,7 @@ firebase_admin.initialize_app(
 )
 
 ser = init_serial_communication()
+wait_for_arduino_setup()
 
 # PiCamera
 try:

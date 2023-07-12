@@ -1,14 +1,59 @@
 # makers' beehives - hardware
+This beehive project is dedicated to remotely monitoring a beehive's activity :
 
-![](beehive-diagram.png)
+Several sensors collect data. This data is then sent through WiFi to a database, and made accessible on a website.
+
+In this repository, we will focus on collecting and sending the data.
+
+The [data visualisation on the website is dealt with on another repository](https://github.com/emlyon/makers-beehives-website/)
+## Summary :
+[1. Global setup](https://github.com/emlyon/makers-beehives-hardware#global-setup)
+
+[2. Power supply](https://github.com/emlyon/makers-beehives-hardware#power-supply)
+
+[3. Raspberry Pi setup](https://github.com/emlyon/makers-beehives-hardware#raspberry-pi-setup)
+
+[4. Arduino Trinket setup](https://github.com/emlyon/makers-beehives-hardware#arduino-trinket)
+
+[5. Arduino Uno setup](https://github.com/emlyon/makers-beehives-hardware#arduino-setup)
+
+## 1. Global setup
+![](assets/beehive-diagram.png)
+
+[Edition du diagramme (drive makers lab)](https://drive.google.com/drive/folders/1L2eGuwuu4EVNqN6som_GeDfP7-7ZTObA)
 
 
-## Alimentation
+This system is designed to run periodic measurement cycles and send the results online.
+
+For each cycle, we will:
+- produce and upload a gif from pictures from the beehive's entrance
+- read several parameters about the beehive's environment and conditions :
+	- Temperature
+	- Humidity
+	- Noise
+	- Weight
+	- Light
+	- CO
+	- NO2
+
+All of this data will then be stored on a online database.
+
+For this project, we use :
+- a solar panel and a powerbank for power supply.
+- an Arduino Trinket, which will trigger and power on the system for 10 minutes, once an hour.
+- an Arduino Uno and a series of sensors. The Arduino Uno will read data from its sensors and send them when requested through a serial port.
+- a Raspberry Pi which will read data from the Arduino Uno, take pictures from a camera, transform them into a gif, and then upload all the data online.
+
+
+## 2. Power supply
+
+To power the system, we use a solar panel and a powerbank.
+
 - [ECO-WORTHY 25W 12V Polycrystalline Solar Panel Module Charging RV Boat](https://www.eco-worthy.com/catalog/worthy-polycrystalline-solar-panel-module-charging-boat-p-455.html)
 - [UBEC DC/DC Step-Down (Buck) Converter - 5V @ 3A output](https://www.adafruit.com/product/1385)
 - [Tecknet 33000mAh powerbank](http://www.tecknet.co.uk/bluetek.html)
 
-## Raspberry Pi config
+## 3. Raspberry Pi setup
 
 ### Install Raspbian OS
 1. Connect the SD card to your computer
@@ -193,16 +238,15 @@ Type ```sudo raspi-config``` and enable RaspiCam: `Interfacing Options` -> `Came
 
 Create secret keys files within the repository:
 
-To move within the repository, type 
+To move within the repository, type
 
 ```
-cd makers-beehives-hardware
+cd makers-beehives-hardware/
 ```
 
 1. `firebase-secrets.json`
 
 ```
-cd makers-beehives-hardware/
 touch firebase-secrets.json
 nano firebase-secrets.json
 ```
@@ -239,6 +283,9 @@ Add this line at the bottom of the file :
 ```python makers-beehives-hardware/beehives.py```
 
 ### References
+
+**Legacy references :**
+
 - [Raspberry Pi / Python: install pip for Python modules dependencies installation](http://makio135.tumblr.com/post/84826991967/raspberry-pi-python-install-pip-for-python)
 - [How to mount a USB flash drive on Raspberry Pi](http://raspi.tv/2012/mount-a-usb-flash-drive-on-raspberry-pi)
 - [How to setup multiple WiFi networks?](http://raspberrypi.stackexchange.com/questions/11631/how-to-setup-multiple-wifi-networks#11738)
@@ -248,11 +295,64 @@ Add this line at the bottom of the file :
 - [Change default username](http://raspberrypi.stackexchange.com/questions/12827/change-default-username)
 - [Execute sudo without Password](http://askubuntu.com/questions/147241/execute-sudo-without-password#147265)
 
+## 4. Arduino Trinket setup
 
-## Arduino config
+The Arduino Trinket will control a relay, in order to power the system on for 10 minutes once an hour.
+
+We will follow [this documentation](https://learn.adafruit.com/introducing-pro-trinket/setting-up-arduino-ide) to set up the trinket
+
+1. Open Arduino IDE
+2. Install Adafruit's board manager (if not already installed) : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
+3. Select the Pro Trinket 5V/16MHz (USB) board :
+
+	*Tools* > *Board* > *Adafruit AVR Boards* > *Pro Trinket 5V/16MHz*
+4. Next select the USBtinyISP programmer : *Tools* > *Programmer* > *USBtinyISP*
+5. Paste the code from [trinketRelay.ino file](https://github.com/emlyon/makers-beehives-hardware/blob/master/trinketRelay/trinketRelay.ino) into the IDE window
+6. Plug in the Arduino Trinket, make sure you see the green LED lit (power good) and the red LED pulsing. Press the button if the red LED is not pulsing, to get into bootloader mode.
+7. Upload the code to the board : *Sketch* > *Upload using programmer*
+
+## 5. Arduino Uno setup
+
+1. Open Arduino IDE
+2. Install Adafruit's board manager (if not already installed) : [Adafruit Arduino AVR Boards](https://learn.adafruit.com/add-boards-arduino-v164/setup)
+3. Plug in the Arduino Uno board
+4. Paste the [code from arduino_beehive.ino](https://github.com/emlyon/makers-beehives-hardware/blob/master/arduino_beehive/arduino_beehive.ino) into the IDE window
+5. Install required libraries from the library interface :
+	- [Dictionary](https://www.arduino.cc/reference/en/libraries/dictionary/)
+
+6. Download and install the sensors' custom libraries
+
+	For the project's needs, we had to customize some existing libraries :
+	- [Multichannel Gas Sensor](https://github.com/emlyon/Mutichannel_Gas_Sensor)
+	- [Grove_Digital_Light_Sensor](https://github.com/makerslabemlyon/Grove_Digital_Light_Sensor)
+	- [Grove_Temperature_And_Humidity_Sensor](https://github.com/makerslabemlyon/Grove_Temperature_And_Humidity_Sensor)
+	- [HX711](https://github.com/makerslabemlyon/HX711)
+
+	For each of the following :
+	1. access to the github repository
+	2. click on *Code*, and *Downlod ZIP*
+		![](assets/git-clone-zip.png)
+	3. Install the library into Arduino IDE:
+
+		Click on *Sketch* > *Include library* > *Add .ZIP library*, then choose the downloaded .ZIP library.
+	4. Upload the code to the Arduino Uno board.
+
+		If you access the serial monitor, you should see some information about the sensors, which will depend on whether the sensors are plugged or not.
+
+7. Using the same process as custom libraries, install the following libraries if needed :
+	- [Low-Power](https://github.com/rocketscream/Low-Power)
+
+Now, you can wire up the sensors on your board, following our documentation on Notion:
+- [Plug the sensors](https://www.notion.so/makerslabemlyon/Documentation-Ruches-2023-87b9968f1ae540bebe24491d58c0829e?pvs=4#df472eb7cfa948afa646c095382271f2)
+- [Plug the load sensor](https://www.notion.so/makerslabemlyon/Documentation-Ruches-2023-87b9968f1ae540bebe24491d58c0829e?pvs=4#83c36c557b3c4b8399e7c495dc986f85)
+
+
+Then, you should be able to fetch data from the sensors :
+
+From the serial monitor, you can request data from the sensors by sending the following serial message : `DATA?`
 
 ### Load sensors
-![](https://cdn.instructables.com/F36/2JAR/J822Y1NX/F362JARJ822Y1NX.LARGE.jpg)
+![](https://content.instructables.com/FYY/8LCO/J7QGHZGZ/FYY8LCOJ7QGHZGZ.png)
 Based on https://www.instructables.com/id/Arduino-Bathroom-Scale-With-50-Kg-Load-Cells-and-H/
 
 ### Seed Studio Base Shield wiring
