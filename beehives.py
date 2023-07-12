@@ -135,6 +135,18 @@ def init_serial_communication():
     return ser
 
 
+def wait_for_arduino_setup():
+    ser.flush()
+    serial_string = ser.readline()
+    print(f">>>> reading serial_string: {serial_string}")
+    while not re.search("Arduino setup is complete.", str(serial_string)):
+        ser.flush()
+        print(f">>>> reading serial_string: {serial_string}")
+        time.sleep(0.1)
+        serial_string = ser.readline()
+    print("serial communication is ready")
+
+
 def take_picture(img_nb, nb_retries=0):
     img_title = str(img_nb) + ".jpg"
     try:
@@ -169,6 +181,7 @@ firebase_admin.initialize_app(
 )
 
 ser = init_serial_communication()
+wait_for_arduino_setup()
 
 # PiCamera
 try:

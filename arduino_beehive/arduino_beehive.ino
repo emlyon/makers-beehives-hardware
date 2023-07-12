@@ -104,6 +104,7 @@ void setup()
 
     scale.set_scale(calibration_factor); // This parameter needs to be adjusted for your weight sensors. Look at the library documentation to find how to calculate it.
                                          // scale.tare(); //no tare absolute weight used
+    Serial.println("Arduino setup is complete.");
 }
 
 void loop()
